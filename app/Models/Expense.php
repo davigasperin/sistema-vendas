@@ -59,6 +59,9 @@ class Expense extends Model
         return $this->status === ExpenseStatus::Overdue;
     }
 
+    /**
+     * @return BelongsTo<ExpenseCategory, $this>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(ExpenseCategory::class);
