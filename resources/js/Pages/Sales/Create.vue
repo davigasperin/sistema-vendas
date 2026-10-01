@@ -304,7 +304,7 @@ function formatMoney(value: number): string {
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100">
-                                    <tr v-for="(item, idx) in items" :key="idx" class="hover:bg-slate-50/50 transition-colors">
+                                    <tr v-for="(item, idx) in items" :key="item.product_id" class="hover:bg-slate-50/50 transition-colors">
                                         <td class="py-3 px-4 font-semibold text-slate-900">
                                             {{ item.name }}
                                         </td>

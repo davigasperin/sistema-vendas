@@ -179,7 +179,7 @@ function formatMoney(value: number): string {
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
-                                <tr v-for="(item, idx) in items" :key="idx">
+                                <tr v-for="(item, idx) in items" :key="item.product_id">
                                     <td class="py-2.5 px-3 font-semibold text-slate-800">{{ item.name }}</td>
                                     <td class="py-2.5 px-3 text-center">{{ item.quantity }}</td>
                                     <td class="py-2.5 px-3 text-right">{{ formatMoney(item.price) }}</td>
