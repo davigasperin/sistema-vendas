@@ -26,7 +26,7 @@ class CustomerManagementTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('customers.index'));
 
         $response->assertOk();
-        $response->assertViewHas('customers');
+        $response->assertInertia(fn ($page) => $page->component('Customers/Index')->has('customers'));
     }
 
     public function test_can_create_customer(): void

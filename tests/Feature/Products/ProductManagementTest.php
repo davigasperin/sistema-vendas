@@ -26,7 +26,7 @@ class ProductManagementTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('products.index'));
 
         $response->assertOk();
-        $response->assertViewHas('products');
+        $response->assertInertia(fn ($page) => $page->component('Products/Index')->has('products'));
     }
 
     public function test_can_create_product(): void
@@ -53,16 +53,12 @@ class ProductManagementTest extends TestCase
     {
         $product = Product::factory()->create(['stock' => 10]);
 
-        $response = $this->actingAs($this->user)->patchJson(
+        $response = $this->actingAs($this->user)->patch(
             route('products.adjust-stock', $product),
             ['adjustment' => 5]
         );
 
-        $response->assertOk();
-        $response->assertJson([
-            'success' => true,
-            'stock' => 15,
-        ]);
+        $response->assertRedirect();
         $this->assertEquals(15, $product->fresh()->stock);
     }
 
@@ -70,11 +66,11 @@ class ProductManagementTest extends TestCase
     {
         $product = Product::factory()->create(['active' => true]);
 
-        $response = $this->actingAs($this->user)->patchJson(
+        $response = $this->actingAs($this->user)->patch(
             route('products.toggle-active', $product)
         );
 
-        $response->assertOk();
+        $response->assertRedirect();
         $this->assertFalse($product->fresh()->active);
     }
 }

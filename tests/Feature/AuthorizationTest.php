@@ -78,6 +78,6 @@ class AuthorizationTest extends TestCase
         $response = $this->actingAs($admin)->get(route('expenses.report'));
 
         $response->assertOk();
-        $response->assertViewIs('expenses.report');
+        $response->assertInertia(fn ($page) => $page->component('Expenses/Report'));
     }
 }

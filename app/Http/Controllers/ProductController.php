@@ -7,7 +7,8 @@ use App\Models\Product;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ProductController extends Controller
 {
@@ -16,7 +17,7 @@ class ProductController extends Controller
         $this->authorizeResource(Product::class, 'product');
     }
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $products = $this->productService->getProductsPaginated(
             $request->filled('search') ? $request->search : null,
@@ -25,17 +26,18 @@ class ProductController extends Controller
 
         $stats = $this->productService->getStatistics();
 
-        return view('products.index', [
+        return Inertia::render('Products/Index', [
             'products' => $products,
             'totalProducts' => $stats['total'],
             'activeProducts' => $stats['active'],
             'lowStock' => $stats['lowStock'],
+            'filters' => $request->only(['search', 'active']),
         ]);
     }
 
-    public function create(): View
+    public function create(): Response
     {
-        return view('products.create');
+        return Inertia::render('Products/Create');
     }
 
     public function store(ProductRequest $request)
@@ -45,20 +47,20 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Produto cadastrado com sucesso!');
     }
 
-    public function show(Product $product): View
+    public function show(Product $product): Response
     {
         $stats = $this->productService->getProductStats($product);
 
-        return view('products.show', [
+        return Inertia::render('Products/Show', [
             'product' => $product,
             'totalSold' => $stats['totalSold'],
             'totalRevenue' => $stats['totalRevenue'],
         ]);
     }
 
-    public function edit(Product $product): View
+    public function edit(Product $product): Response
     {
-        return view('products.edit', compact('product'));
+        return Inertia::render('Products/Edit', compact('product'));
     }
 
     public function update(ProductRequest $request, Product $product)
@@ -75,26 +77,19 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Produto excluído com sucesso!');
     }
 
-    public function adjustStock(Request $request, Product $product): JsonResponse
+    public function adjustStock(Request $request, Product $product)
     {
         $adjustment = (int) $request->get('adjustment', 0);
-        $newStock = $this->productService->adjustStock($product, $adjustment);
+        $this->productService->adjustStock($product, $adjustment);
 
-        return response()->json([
-            'success' => true,
-            'stock' => $newStock,
-            'message' => $newStock === 0 ? 'Estoque zerado!' : 'Estoque atualizado',
-        ]);
+        return back()->with('success', 'Estoque atualizado!');
     }
 
-    public function toggleActive(Product $product): JsonResponse
+    public function toggleActive(Product $product)
     {
-        $isActive = $this->productService->toggleActive($product);
+        $this->productService->toggleActive($product);
 
-        return response()->json([
-            'success' => true,
-            'active' => $isActive,
-        ]);
+        return back()->with('success', 'Status atualizado!');
     }
 
     public function searchApi(Request $request): JsonResponse

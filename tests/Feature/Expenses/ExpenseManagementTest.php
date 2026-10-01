@@ -28,7 +28,7 @@ class ExpenseManagementTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('expenses.index'));
 
         $response->assertOk();
-        $response->assertViewHas('expenses');
+        $response->assertInertia(fn ($page) => $page->component('Expenses/Index')->has('expenses'));
     }
 
     public function test_can_create_expense(): void
@@ -60,12 +60,12 @@ class ExpenseManagementTest extends TestCase
             'paid_date' => null,
         ]);
 
-        $response = $this->actingAs($this->user)->patchJson(
+        $response = $this->actingAs($this->user)->patch(
             route('expenses.markPaid', $expense),
             ['paid_date' => now()->format('Y-m-d')]
         );
 
-        $response->assertOk();
+        $response->assertRedirect();
         $this->assertEquals(ExpenseStatus::Paid, $expense->fresh()->status);
         $this->assertNotNull($expense->fresh()->paid_date);
     }

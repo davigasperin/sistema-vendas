@@ -7,7 +7,8 @@ use App\Models\Customer;
 use App\Services\CustomerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CustomerController extends Controller
 {
@@ -16,7 +17,7 @@ class CustomerController extends Controller
         $this->authorizeResource(Customer::class, 'customer');
     }
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $customers = $this->customerService->getCustomersPaginated(
             $request->filled('search') ? $request->search : null
@@ -24,17 +25,18 @@ class CustomerController extends Controller
 
         $stats = $this->customerService->getStatistics();
 
-        return view('customers.index', [
+        return Inertia::render('Customers/Index', [
             'customers' => $customers,
             'totalCustomers' => $stats['total'],
             'newThisMonth' => $stats['newThisMonth'],
             'recentCustomers' => $stats['recent'],
+            'filters' => $request->only(['search']),
         ]);
     }
 
-    public function create(): View
+    public function create(): Response
     {
-        return view('customers.create');
+        return Inertia::render('Customers/Create');
     }
 
     public function store(CustomerRequest $request)
@@ -44,16 +46,16 @@ class CustomerController extends Controller
         return redirect()->route('customers.index')->with('success', 'Cliente cadastrado com sucesso!');
     }
 
-    public function show(Customer $customer): View
+    public function show(Customer $customer): Response
     {
         $customer->load('sales.items.product');
 
-        return view('customers.show', compact('customer'));
+        return Inertia::render('Customers/Show', compact('customer'));
     }
 
-    public function edit(Customer $customer): View
+    public function edit(Customer $customer): Response
     {
-        return view('customers.edit', compact('customer'));
+        return Inertia::render('Customers/Edit', compact('customer'));
     }
 
     public function update(CustomerRequest $request, Customer $customer)

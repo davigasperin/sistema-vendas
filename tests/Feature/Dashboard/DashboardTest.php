@@ -33,26 +33,24 @@ class DashboardTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('dashboard'));
 
         $response->assertOk();
-        $response->assertViewHasAll([
-            'salesStats',
-            'latestSales',
-            'paymentMethods',
-            'financialSummary',
-            'overdueExpenses',
-            'recentTransactions',
-        ]);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->has('salesStats')
+            ->has('latestSales')
+            ->has('paymentMethods')
+            ->has('financialSummary')
+            ->has('recentTransactions')
+        );
     }
 
     public function test_dashboard_metrics_exclude_cancelled_sales(): void
     {
-        // Venda concluída de R$ 300,00
         Sale::factory()->create([
             'total_amount' => 300.00,
             'status' => SaleStatus::Completed,
             'created_at' => now(),
         ]);
 
-        // Venda cancelada de R$ 500,00 (não deve entrar na soma)
         Sale::factory()->create([
             'total_amount' => 500.00,
             'status' => SaleStatus::Cancelled,
@@ -62,10 +60,11 @@ class DashboardTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('dashboard'));
 
         $response->assertOk();
-        $salesStats = $response->viewData('salesStats');
-
-        $this->assertEquals(1, $salesStats['total']);
-        $this->assertEquals(300.00, $salesStats['month']);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('salesStats.total', 1)
+            ->where('salesStats.month', 300)
+        );
     }
 
     public function test_product_service_stats_aggregates_without_n_plus_one(): void

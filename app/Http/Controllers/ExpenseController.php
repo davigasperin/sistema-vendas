@@ -6,10 +6,10 @@ use App\Http\Requests\StoreExpenseRequest;
 use App\Http\Requests\UpdateExpenseRequest;
 use App\Models\Expense;
 use App\Services\ExpenseService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ExpenseController extends Controller
 {
@@ -18,7 +18,7 @@ class ExpenseController extends Controller
         $this->authorizeResource(Expense::class, 'expense');
     }
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $expenses = $this->expenseService->getExpensesPaginated(
             $request->filled('search') ? $request->search : null,
@@ -26,16 +26,17 @@ class ExpenseController extends Controller
             $request->filled('type') ? $request->type : null
         );
 
-        return view('expenses.index', [
+        return Inertia::render('Expenses/Index', [
             'expenses' => $expenses,
             'categories' => $this->expenseService->getAllCategories(),
+            'filters' => $request->only(['search', 'status', 'type']),
         ]);
     }
 
-    public function create(): View
+    public function create(): Response
     {
-        return view('expenses.create', [
-            'categories' => $this->expenseService->getCategoriesByType(Expense::TYPE_EXPENSE),
+        return Inertia::render('Expenses/Create', [
+            'categories' => $this->expenseService->getAllCategories(),
         ]);
     }
 
@@ -46,20 +47,20 @@ class ExpenseController extends Controller
         return redirect()->route('expenses.index')->with('success', 'Despesa cadastrada com sucesso!');
     }
 
-    public function show(Expense $expense): View
+    public function show(Expense $expense): Response
     {
         $expense->load('category');
 
-        return view('expenses.show', [
+        return Inertia::render('Expenses/Show', [
             'expense' => $expense,
         ]);
     }
 
-    public function edit(Expense $expense): View
+    public function edit(Expense $expense): Response
     {
         $expense->load('category');
 
-        return view('expenses.edit', [
+        return Inertia::render('Expenses/Edit', [
             'expense' => $expense,
             'categories' => $this->expenseService->getAllCategories(),
         ]);
@@ -79,26 +80,22 @@ class ExpenseController extends Controller
         return redirect()->route('expenses.index')->with('success', 'Despesa excluída com sucesso!');
     }
 
-    public function markPaid(Request $request, Expense $expense): JsonResponse
+    public function markPaid(Request $request, Expense $expense)
     {
         $paidDate = $request->filled('paid_date') ? $request->paid_date : null;
         $this->expenseService->markAsPaid($expense, $paidDate);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Despesa marcada como paga!',
-            'expense' => $expense->fresh(),
-        ]);
+        return back()->with('success', 'Despesa marcada como paga!');
     }
 
-    public function report(Request $request): View
+    public function report(Request $request): Response
     {
         $startDate = $request->filled('start_date') ? $request->start_date : now()->startOfMonth()->toDateString();
         $endDate = $request->filled('end_date') ? $request->end_date : now()->endOfMonth()->toDateString();
 
         $summary = $this->expenseService->getSummaryByPeriod($startDate, $endDate);
 
-        return view('expenses.report', [
+        return Inertia::render('Expenses/Report', [
             'summary' => $summary,
             'startDate' => $startDate,
             'endDate' => $endDate,
