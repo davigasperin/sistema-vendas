@@ -20,12 +20,14 @@ class SaleService
     public function createSale(array $data): Sale
     {
         $data['user_id'] = auth()->id();
+
         return ($this->createSaleAction)($data);
     }
 
     public function updateSale(Sale $sale, array $data): Sale
     {
         $data['user_id'] = auth()->id();
+
         return ($this->updateSaleAction)($sale, $data);
     }
 

@@ -29,7 +29,7 @@ class CreateSaleAction
             $data['user_id'] = auth()->id();
             $data['total_amount'] = $this->calculateTotal($items, $data['discount'] ?? 0);
 
-            $sale = new Sale();
+            $sale = new Sale;
             $sale->forceFill($data)->save();
 
             foreach ($items as $item) {

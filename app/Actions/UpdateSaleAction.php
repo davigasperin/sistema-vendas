@@ -38,7 +38,7 @@ class UpdateSaleAction
             }
 
             if (($data['installments'] ?? 1) > 0) {
-                $installmentAction = new GenerateInstallmentsAction();
+                $installmentAction = new GenerateInstallmentsAction;
                 $installmentAction(
                     $sale,
                     $data['installment_amounts'] ?? [],

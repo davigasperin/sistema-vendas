@@ -2,21 +2,25 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Builder;
 
 class Expense extends Model
 {
     use HasFactory;
 
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_PAID = 'paid';
+
     public const STATUS_OVERDUE = 'overdue';
+
     public const STATUS_CANCELLED = 'cancelled';
 
     public const TYPE_EXPENSE = 'expense';
+
     public const TYPE_INCOME = 'income';
 
     protected $fillable = [
@@ -27,7 +31,7 @@ class Expense extends Model
         'category_id',
         'type',
         'status',
-        'notes'
+        'notes',
     ];
 
     protected $casts = [

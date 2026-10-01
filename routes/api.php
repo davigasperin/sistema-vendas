@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
@@ -11,5 +12,5 @@ Route::middleware(['throttle:api', 'auth:sanctum'])->group(function () {
 });
 
 Route::middleware(['throttle:api'])->group(function () {
-    Route::post('/login', [App\Http\Controllers\Api\AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login']);
 });

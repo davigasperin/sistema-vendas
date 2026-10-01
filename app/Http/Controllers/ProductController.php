@@ -80,7 +80,7 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'stock' => $newStock,
-            'message' => $newStock === 0 ? 'Estoque zerado!' : 'Estoque atualizado'
+            'message' => $newStock === 0 ? 'Estoque zerado!' : 'Estoque atualizado',
         ]);
     }
 
@@ -90,7 +90,7 @@ class ProductController extends Controller
 
         return response()->json([
             'success' => true,
-            'active' => $isActive
+            'active' => $isActive,
         ]);
     }
 

@@ -32,7 +32,7 @@ class SaleRequest extends FormRequest
             'installment_amounts.*' => 'required|numeric|min:0',
         ];
 
-        if (!empty($this->input('installment_amounts'))) {
+        if (! empty($this->input('installment_amounts'))) {
             $rules['installment_amounts'] = ['nullable', 'array', 'min:1', new InstallmentsSumRule($total)];
         }
 

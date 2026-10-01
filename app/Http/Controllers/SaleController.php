@@ -15,12 +15,14 @@ class SaleController extends Controller
     public function index(Request $request)
     {
         $data = $this->saleService->getSalesFiltered($request);
+
         return view('sales.index', $data);
     }
 
     public function create()
     {
         $data = $this->saleService->getSalesForCreate();
+
         return view('sales.create', $data);
     }
 
@@ -34,12 +36,14 @@ class SaleController extends Controller
     public function show(Sale $sale)
     {
         $sale = $this->saleService->getSaleForShow($sale);
+
         return view('sales.show', compact('sale'));
     }
 
     public function edit(Sale $sale)
     {
         $data = $this->saleService->getSalesForEdit($sale);
+
         return view('sales.edit', $data);
     }
 
@@ -53,6 +57,7 @@ class SaleController extends Controller
     public function destroy(Sale $sale)
     {
         $this->saleService->deleteSale($sale);
+
         return redirect()->route('sales.index')->with('success', 'Venda excluída com sucesso!');
     }
 
@@ -60,6 +65,7 @@ class SaleController extends Controller
     {
         $sale = Sale::onlyTrashed()->findOrFail($id);
         $sale->restore();
+
         return redirect()->route('sales.index')->with('success', 'Venda restaurada com sucesso!');
     }
 
@@ -67,6 +73,7 @@ class SaleController extends Controller
     {
         $sale = $this->saleService->getSaleForShow($sale);
         $pdf = Pdf::loadView('sales.pdf', compact('sale'));
+
         return $pdf->download("venda_{$sale->id}.pdf");
     }
 }

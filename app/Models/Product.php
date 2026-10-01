@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Builder;
 
 class Product extends Model
 {
@@ -24,7 +25,10 @@ class Product extends Model
         'low_stock_threshold' => 5,
     ];
 
-    public function saleItems()
+    /**
+     * @return HasMany<SaleItem, $this>
+     */
+    public function saleItems(): HasMany
     {
         return $this->hasMany(SaleItem::class);
     }
@@ -41,11 +45,11 @@ class Product extends Model
 
     public function scopeLowStock(Builder $query): Builder
     {
-        return $query->active()->whereColumn('stock', '<=', 'low_stock_threshold');
+        return $query->where('active', true)->whereColumn('stock', '<=', 'low_stock_threshold');
     }
 
     public function scopeSearch(Builder $query, string $search): Builder
     {
-        return $query->where('name', 'like', '%' . $search . '%');
+        return $query->where('name', 'like', '%'.$search.'%');
     }
 }

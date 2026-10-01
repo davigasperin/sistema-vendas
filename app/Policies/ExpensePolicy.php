@@ -24,7 +24,7 @@ class ExpensePolicy
 
     public function update(User $user, Expense $expense): bool
     {
-        if (!$user->canManageExpenses()) {
+        if (! $user->canManageExpenses()) {
             return false;
         }
 
@@ -33,7 +33,7 @@ class ExpensePolicy
 
     public function delete(User $user, Expense $expense): bool
     {
-        if (!$user->isAdmin()) {
+        if (! $user->isAdmin()) {
             return false;
         }
 
@@ -42,7 +42,7 @@ class ExpensePolicy
 
     public function markPaid(User $user, Expense $expense): bool
     {
-        return $user->canManageExpenses() 
+        return $user->canManageExpenses()
             && $expense->status === Expense::STATUS_PENDING;
     }
 

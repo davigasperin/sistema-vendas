@@ -44,6 +44,7 @@ class CustomerController extends Controller
     public function show(Customer $customer): View
     {
         $customer->load('sales.items.product');
+
         return view('customers.show', compact('customer'));
     }
 

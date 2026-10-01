@@ -21,7 +21,7 @@ class DashboardController extends Controller
 
         $startOfMonth = now()->startOfMonth()->toDateString();
         $endOfMonth = now()->endOfMonth()->toDateString();
-        
+
         $financialSummary = $this->expenseService->getSummaryByPeriod($startOfMonth, $endOfMonth);
         $overdueExpenses = $this->expenseService->getOverdueExpenses()->take(5);
         $recentTransactions = $this->expenseService->getRecentTransactions(5);

@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SaleInstallment extends Model
 {
     use HasFactory;
 
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_PAID = 'paid';
+
     public const STATUS_OVERDUE = 'overdue';
 
     protected $fillable = [
@@ -22,7 +25,7 @@ class SaleInstallment extends Model
         'paid_date',
         'is_paid',
         'notes',
-        'payment_method_id'
+        'payment_method_id',
     ];
 
     protected $casts = [
@@ -32,12 +35,18 @@ class SaleInstallment extends Model
         'is_paid' => 'boolean',
     ];
 
-    public function sale()
+    /**
+     * @return BelongsTo<Sale, $this>
+     */
+    public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class);
     }
 
-    public function paymentMethod()
+    /**
+     * @return BelongsTo<PaymentMethod, $this>
+     */
+    public function paymentMethod(): BelongsTo
     {
         return $this->belongsTo(PaymentMethod::class);
     }
@@ -88,7 +97,7 @@ class SaleInstallment extends Model
 
     public function isOverdue(): bool
     {
-        return !$this->is_paid && $this->due_date < now()->toDateString();
+        return ! $this->is_paid && $this->due_date < now()->toDateString();
     }
 
     public function markAsPaid(?string $paidDate = null, ?int $paymentMethodId = null): self

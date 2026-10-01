@@ -12,8 +12,8 @@ class ProductService
     {
         $query = Product::query();
 
-        if (!empty($filters['search'])) {
-            $query->where('name', 'like', '%' . $filters['search'] . '%');
+        if (! empty($filters['search'])) {
+            $query->where('name', 'like', '%'.$filters['search'].'%');
         }
 
         if (isset($filters['active'])) {
@@ -31,11 +31,11 @@ class ProductService
     {
         $query = Product::query();
 
-        if (!empty($search)) {
-            $query->where('name', 'like', '%' . $search . '%');
+        if (! empty($search)) {
+            $query->where('name', 'like', '%'.$search.'%');
         }
 
-        if (!is_null($active)) {
+        if (! is_null($active)) {
             if ($active === '1') {
                 $query->where('active', true);
             } elseif ($active === '0') {
@@ -68,6 +68,7 @@ class ProductService
     public function updateProduct(Product $product, array $data): Product
     {
         $product->update($data);
+
         return $product;
     }
 
@@ -80,19 +81,21 @@ class ProductService
     {
         $newStock = max(0, $product->stock + $adjustment);
         $product->update(['stock' => $newStock]);
+
         return $newStock;
     }
 
     public function toggleActive(Product $product): bool
     {
-        $product->update(['active' => !$product->active]);
+        $product->update(['active' => ! $product->active]);
+
         return $product->active;
     }
 
     public function getProductStats(Product $product): array
     {
         $product->load(['saleItems.sale.customer', 'saleItems.sale.user']);
-        
+
         return [
             'totalSold' => $product->saleItems->sum('quantity'),
             'totalRevenue' => $product->saleItems->sum(function ($item) {

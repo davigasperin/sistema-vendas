@@ -13,7 +13,7 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
 
-        if (!$product) {
+        if (! $product) {
             return response()->json(['error' => 'Produto não encontrado'], 404);
         }
 

@@ -6,8 +6,8 @@ use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Sale;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection as SupportCollection;
 
 class ExpenseService
 {
@@ -15,15 +15,15 @@ class ExpenseService
     {
         $query = Expense::query()->with('category');
 
-        if (!empty($search)) {
-            $query->where('description', 'like', '%' . $search . '%');
+        if (! empty($search)) {
+            $query->where('description', 'like', '%'.$search.'%');
         }
 
-        if (!is_null($status)) {
+        if (! is_null($status)) {
             $query->where('status', $status);
         }
 
-        if (!is_null($type)) {
+        if (! is_null($type)) {
             $query->where('type', $type);
         }
 
@@ -91,6 +91,7 @@ class ExpenseService
     public function markAsCancelled(Expense $expense): Expense
     {
         $expense->update(['status' => Expense::STATUS_CANCELLED]);
+
         return $expense->fresh();
     }
 
@@ -180,7 +181,7 @@ class ExpenseService
             ->map(function ($sale) {
                 return (object) [
                     'type' => 'income',
-                    'description' => 'Venda #' . $sale->id . ($sale->customer?->name ? ' - ' . $sale->customer->name : ''),
+                    'description' => 'Venda #'.$sale->id.($sale->customer?->name ? ' - '.$sale->customer->name : ''),
                     'amount' => $sale->total_amount,
                     'date' => $sale->created_at,
                     'status' => 'paid',
@@ -217,10 +218,10 @@ class ExpenseService
 
     public function getSummaryByPeriod(?string $startDate = null, ?string $endDate = null): array
     {
-        if (!$startDate) {
+        if (! $startDate) {
             $startDate = now()->startOfMonth()->toDateString();
         }
-        if (!$endDate) {
+        if (! $endDate) {
             $endDate = now()->endOfMonth()->toDateString();
         }
 
