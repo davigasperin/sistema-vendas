@@ -81,10 +81,10 @@ function formatMoney(value: number): string {
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
             <div class="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
                 <div>
-                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Catálogo Total</span>
+                    <span class="text-xs font-medium text-slate-400 uppercase block">Catálogo Total</span>
                     <span class="text-xl font-semibold text-slate-900 tabular-nums">{{ totalProducts }} itens</span>
                 </div>
-                <div class="h-9 w-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600">
+                <div class="h-9 w-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                     </svg>
@@ -93,7 +93,7 @@ function formatMoney(value: number): string {
 
             <div class="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
                 <div>
-                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Disponíveis para Venda</span>
+                    <span class="text-xs font-medium text-slate-400 uppercase block">Disponíveis para Venda</span>
                     <span class="text-xl font-semibold text-slate-900 tabular-nums">{{ activeProducts }} ativos</span>
                 </div>
                 <div class="h-9 w-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
@@ -105,7 +105,7 @@ function formatMoney(value: number): string {
 
             <div class="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
                 <div>
-                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Estoque Crítico</span>
+                    <span class="text-xs font-medium text-slate-400 uppercase block">Estoque Crítico</span>
                     <span class="text-xl font-semibold tabular-nums" :class="lowStock > 0 ? 'text-rose-600' : 'text-slate-900'">
                         {{ lowStock }} itens
                     </span>
@@ -138,7 +138,7 @@ function formatMoney(value: number): string {
         <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs text-slate-600">
-                    <thead class="uppercase bg-slate-50/80 text-slate-500 font-semibold border-b border-slate-200/80">
+                    <thead class="uppercase bg-slate-50/80 text-slate-500 font-medium border-b border-slate-200">
                         <tr>
                             <th class="py-3 px-4">Produto</th>
                             <th class="py-3 px-4">Preço Oficial</th>

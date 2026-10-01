@@ -22,9 +22,9 @@ function submit() {
         <Head title="Cadastrar Cliente" />
 
         <div class="max-w-3xl mx-auto">
-            <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-200/80">
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-slate-900">Novo Cliente</h1>
+                    <h1 class="text-xl font-semibold text-slate-900">Novo Cliente</h1>
                     <p class="text-xs text-slate-500 mt-0.5">Cadastre o cliente para emissão de pedidos e relatórios.</p>
                 </div>
                 <Link
@@ -35,7 +35,7 @@ function submit() {
                 </Link>
             </div>
 
-            <form @submit.prevent="submit" class="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-2xs space-y-5">
+            <form @submit.prevent="submit" class="rounded-xl border border-slate-200 bg-white p-6 sm:p-8 space-y-5">
                 <div>
                     <TextInput
                         v-model="form.name"

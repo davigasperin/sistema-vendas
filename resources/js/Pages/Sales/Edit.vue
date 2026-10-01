@@ -120,50 +120,50 @@ function formatMoney(value: number): string {
         <div class="max-w-6xl mx-auto">
             <div class="flex items-center justify-between mb-8">
                 <div class="flex items-center gap-3">
-                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">Editar Venda #{{ sale.id }}</h1>
+                    <h1 class="text-2xl font-semibold text-slate-900">Editar Venda #{{ sale.id }}</h1>
                     <Badge variant="warning">Editando</Badge>
                 </div>
-                <Link href="/sales" class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors">
+                <Link href="/sales" class="text-xs font-medium text-slate-500 hover:text-slate-900 transition-colors">
                     &larr; Voltar
                 </Link>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 space-y-6">
-                    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
-                        <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">1. Cliente e Pagamento</h2>
+                    <div class="rounded-xl border border-slate-200 bg-white p-6 space-y-4">
+                        <h2 class="text-base font-semibold text-slate-900 border-b border-slate-100 pb-3">1. Cliente e Pagamento</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Cliente</label>
-                                <select v-model="form.customer_id" class="w-full rounded-xl border-slate-200 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                                <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Cliente</label>
+                                <select v-model="form.customer_id" class="w-full rounded-lg border-slate-200 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:ring-slate-900/10">
                                     <option value="">Cliente Avulso</option>
                                     <option v-for="c in customers" :key="c.id" :value="c.id">{{ c.name }}</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Forma de Pagamento *</label>
-                                <select v-model="form.payment_method_id" class="w-full rounded-xl border-slate-200 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                                <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Forma de Pagamento *</label>
+                                <select v-model="form.payment_method_id" class="w-full rounded-lg border-slate-200 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:ring-slate-900/10">
                                     <option v-for="pm in paymentMethods" :key="pm.id" :value="pm.id">{{ pm.name }}</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
-                        <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">2. Itens</h2>
+                    <div class="rounded-xl border border-slate-200 bg-white p-6 space-y-4">
+                        <h2 class="text-base font-semibold text-slate-900 border-b border-slate-100 pb-3">2. Itens</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
                             <div class="sm:col-span-2">
-                                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Adicionar Produto</label>
-                                <select v-model="selectedProductId" class="w-full rounded-xl border-slate-200 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500">
+                                <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Adicionar Produto</label>
+                                <select v-model="selectedProductId" class="w-full rounded-lg border-slate-200 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:ring-slate-900/10">
                                     <option value="">Selecione...</option>
                                     <option v-for="p in products" :key="p.id" :value="p.id">{{ p.name }} (Estoque: {{ p.stock }})</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Qtd</label>
-                                <input v-model.number="selectedQuantity" type="number" min="1" class="w-full rounded-xl border-slate-200 px-3.5 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500" />
+                                <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Qtd</label>
+                                <input v-model.number="selectedQuantity" type="number" min="1" class="w-full rounded-lg border-slate-200 px-3.5 py-2.5 text-sm focus:border-slate-900 focus:ring-slate-900/10" />
                             </div>
-                            <button type="button" @click="addItem" :disabled="!selectedProductId" class="rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-40 transition-colors">
+                            <button type="button" @click="addItem" :disabled="!selectedProductId" class="rounded-lg bg-slate-800 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-900 disabled:opacity-40 transition-colors">
                                 + Adicionar
                             </button>
                         </div>
@@ -183,9 +183,9 @@ function formatMoney(value: number): string {
                                     <td class="py-2.5 px-3 font-semibold text-slate-800">{{ item.name }}</td>
                                     <td class="py-2.5 px-3 text-center">{{ item.quantity }}</td>
                                     <td class="py-2.5 px-3 text-right">{{ formatMoney(item.price) }}</td>
-                                    <td class="py-2.5 px-3 text-right font-bold text-slate-900">{{ formatMoney(item.price * item.quantity) }}</td>
+                                    <td class="py-2.5 px-3 text-right font-semibold text-slate-900">{{ formatMoney(item.price * item.quantity) }}</td>
                                     <td class="py-2.5 px-3 text-center">
-                                        <button type="button" @click="removeItem(idx)" class="text-rose-500 hover:text-rose-700 font-bold">&times;</button>
+                                        <button type="button" @click="removeItem(idx)" class="text-rose-500 hover:text-rose-700 font-semibold">&times;</button>
                                     </td>
                                 </tr>
                                 <tr v-if="!items.length">
@@ -197,24 +197,24 @@ function formatMoney(value: number): string {
                 </div>
 
                 <div class="space-y-6">
-                    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-5 sticky top-8">
-                        <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">Resumo</h2>
+                    <div class="rounded-xl border border-slate-200 bg-white p-6 space-y-5 sticky top-8">
+                        <h2 class="text-base font-semibold text-slate-900 border-b border-slate-100 pb-3">Resumo</h2>
                         <div class="flex justify-between text-slate-500 text-sm">
                             <span>Subtotal</span>
                             <span class="font-semibold text-slate-900">{{ formatMoney(subtotal) }}</span>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Desconto (R$)</label>
-                            <input v-model.number="form.discount" type="number" step="0.01" min="0" class="w-full rounded-xl border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:ring-blue-500" />
+                            <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Desconto (R$)</label>
+                            <input v-model.number="form.discount" type="number" step="0.01" min="0" class="w-full rounded-lg border-slate-200 px-3.5 py-2 text-sm focus:border-slate-900 focus:ring-slate-900/10" />
                         </div>
                         <div class="pt-3 border-t border-slate-100 flex justify-between items-baseline">
-                            <span class="text-base font-bold text-slate-900">Total</span>
-                            <span class="text-2xl font-extrabold text-blue-600">{{ formatMoney(totalAmount) }}</span>
+                            <span class="text-base font-semibold text-slate-900">Total</span>
+                            <span class="text-2xl font-semibold text-slate-900">{{ formatMoney(totalAmount) }}</span>
                         </div>
 
                         <div class="pt-3 border-t border-slate-100 space-y-2">
-                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider">Parcelas</label>
-                            <select v-model.number="form.installments" class="w-full rounded-xl border-slate-200 px-3.5 py-2 text-sm focus:border-blue-500 focus:ring-blue-500">
+                            <label class="block text-xs font-medium text-slate-400 uppercase">Parcelas</label>
+                            <select v-model.number="form.installments" class="w-full rounded-lg border-slate-200 px-3.5 py-2 text-sm focus:border-slate-900 focus:ring-slate-900/10">
                                 <option v-for="n in 12" :key="n" :value="n">{{ n }}x</option>
                             </select>
                         </div>
@@ -223,7 +223,7 @@ function formatMoney(value: number): string {
                             type="button"
                             @click="submit"
                             :disabled="form.processing || !items.length"
-                            class="w-full rounded-xl bg-blue-600 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                            class="w-full rounded-lg bg-slate-800 py-3.5 text-sm font-semibold text-white hover:bg-slate-900 disabled:opacity-50 transition-colors"
                         >
                             {{ form.processing ? 'Salvando...' : 'Salvar Alterações' }}
                         </button>

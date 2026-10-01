@@ -62,7 +62,7 @@ function formatDate(dateStr: string): string {
 
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-slate-900">Vendas</h1>
+                <h1 class="text-2xl font-semibold text-slate-900">Vendas</h1>
                 <p class="text-sm text-slate-500 mt-0.5">Histórico completo de pedidos, faturamento e emissão de notas/PDF.</p>
             </div>
             <Link href="/sales/create">
@@ -76,13 +76,13 @@ function formatDate(dateStr: string): string {
         </div>
 
         <!-- Filter Card -->
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 mb-6 shadow-xs">
+        <div class="rounded-xl border border-slate-200 bg-white p-5 mb-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Cliente</label>
+                    <label class="block text-xs font-medium text-slate-500 uppercase mb-1">Cliente</label>
                     <select
                         v-model="customerId"
-                        class="w-full rounded-xl border-slate-200 px-3.5 py-2 text-xs focus:border-blue-500 focus:ring-blue-500"
+                        class="w-full rounded-lg border-slate-200 px-3.5 py-2 text-xs focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
                     >
                         <option value="">Todos os clientes</option>
                         <option v-for="c in customers" :key="c.id" :value="c.id">{{ c.name }}</option>
@@ -90,10 +90,10 @@ function formatDate(dateStr: string): string {
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Forma de Pagamento</label>
+                    <label class="block text-xs font-medium text-slate-500 uppercase mb-1">Forma de Pagamento</label>
                     <select
                         v-model="paymentMethodId"
-                        class="w-full rounded-xl border-slate-200 px-3.5 py-2 text-xs focus:border-blue-500 focus:ring-blue-500"
+                        class="w-full rounded-lg border-slate-200 px-3.5 py-2 text-xs focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
                     >
                         <option value="">Todas as formas</option>
                         <option v-for="pm in paymentMethods" :key="pm.id" :value="pm.id">{{ pm.name }}</option>
@@ -101,20 +101,20 @@ function formatDate(dateStr: string): string {
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Data Inicial</label>
+                    <label class="block text-xs font-medium text-slate-500 uppercase mb-1">Data Inicial</label>
                     <input
                         v-model="dateFrom"
                         type="date"
-                        class="w-full rounded-xl border-slate-200 px-3.5 py-2 text-xs focus:border-blue-500 focus:ring-blue-500"
+                        class="w-full rounded-lg border-slate-200 px-3.5 py-2 text-xs focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
                     />
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Data Final</label>
+                    <label class="block text-xs font-medium text-slate-500 uppercase mb-1">Data Final</label>
                     <input
                         v-model="dateTo"
                         type="date"
-                        class="w-full rounded-xl border-slate-200 px-3.5 py-2 text-xs focus:border-blue-500 focus:ring-blue-500"
+                        class="w-full rounded-lg border-slate-200 px-3.5 py-2 text-xs focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
                     />
                 </div>
             </div>
@@ -130,7 +130,7 @@ function formatDate(dateStr: string): string {
         </div>
 
         <!-- Sales Table -->
-        <div class="rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+        <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm text-slate-600">
                     <thead class="text-xs uppercase bg-slate-50 text-slate-500 border-b border-slate-200">
@@ -147,7 +147,7 @@ function formatDate(dateStr: string): string {
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         <tr v-for="sale in sales.data" :key="sale.id" class="hover:bg-slate-50/60 transition-colors">
-                            <td class="py-3.5 px-4 font-bold text-slate-900">#{{ sale.id }}</td>
+                            <td class="py-3.5 px-4 font-medium text-slate-900">#{{ sale.id }}</td>
                             <td class="py-3.5 px-4 text-xs">{{ formatDate(sale.created_at) }}</td>
                             <td class="py-3.5 px-4 font-medium text-slate-800">
                                 {{ sale.customer?.name || 'Cliente Avulso' }}
@@ -156,7 +156,7 @@ function formatDate(dateStr: string): string {
                             <td class="py-3.5 px-4 text-xs text-slate-500">
                                 {{ sale.installments }}x
                             </td>
-                            <td class="py-3.5 px-4 text-right font-bold text-slate-900">
+                            <td class="py-3.5 px-4 text-right font-semibold text-slate-900">
                                 {{ formatMoney(sale.total_amount) }}
                             </td>
                             <td class="py-3.5 px-4 text-center">
@@ -168,13 +168,13 @@ function formatDate(dateStr: string): string {
                                 <a
                                     :href="`/sales/${sale.id}/pdf`"
                                     target="_blank"
-                                    class="text-xs font-semibold text-rose-600 hover:text-rose-800 transition-colors"
+                                    class="text-xs font-medium text-slate-500 hover:text-slate-900 transition-colors"
                                 >
                                     PDF
                                 </a>
                                 <Link
                                     :href="`/sales/${sale.id}`"
-                                    class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors"
+                                    class="text-xs font-medium text-slate-500 hover:text-slate-900 transition-colors"
                                 >
                                     Ver Detalhes
                                 </Link>

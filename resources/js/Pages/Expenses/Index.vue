@@ -50,7 +50,7 @@ function getStatusVariant(statusStr: string) {
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-slate-900">Despesas & Receitas</h1>
+                <h1 class="text-2xl font-semibold text-slate-900">Despesas & Receitas</h1>
                 <p class="text-xs text-slate-500 mt-1">Controle de contas a pagar, quitação de despesas e entradas manuais de caixa.</p>
             </div>
             <div class="flex items-center gap-2.5">
@@ -74,21 +74,21 @@ function getStatusVariant(statusStr: string) {
         </div>
 
         <!-- Filter Bar -->
-        <div class="rounded-2xl border border-slate-200/80 bg-white p-4 mb-6 shadow-2xs grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <div class="rounded-xl border border-slate-200 bg-white p-4 mb-6 grid grid-cols-1 sm:grid-cols-4 gap-3">
             <div>
                 <input
                     v-model="search"
                     @keyup.enter="applyFilters"
                     type="text"
                     placeholder="Buscar por descrição..."
-                    class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all"
+                    class="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-colors"
                 />
             </div>
             <div>
                 <select
                     v-model="status"
                     @change="applyFilters"
-                    class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs text-slate-800 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer"
+                    class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs text-slate-800 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer"
                 >
                     <option value="">Todos os status</option>
                     <option value="pending">Pendente</option>
@@ -101,7 +101,7 @@ function getStatusVariant(statusStr: string) {
                 <select
                     v-model="type"
                     @change="applyFilters"
-                    class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs text-slate-800 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer"
+                    class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs text-slate-800 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer"
                 >
                     <option value="">Todos os tipos</option>
                     <option value="expense">Despesas (Saída)</option>
@@ -116,10 +116,10 @@ function getStatusVariant(statusStr: string) {
         </div>
 
         <!-- Data Table -->
-        <div class="rounded-2xl border border-slate-200/80 bg-white shadow-2xs overflow-hidden">
+        <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs text-slate-600">
-                    <thead class="uppercase bg-slate-50/80 text-slate-500 font-semibold border-b border-slate-200/80">
+                    <thead class="uppercase bg-slate-50/80 text-slate-500 font-medium border-b border-slate-200">
                         <tr>
                             <th class="py-3 px-4">Descrição</th>
                             <th class="py-3 px-4">Categoria</th>
@@ -137,7 +137,7 @@ function getStatusVariant(statusStr: string) {
                             :key="expense.id"
                             class="hover:bg-slate-50/60 transition-colors"
                         >
-                            <td class="py-3 px-4 font-bold text-slate-900">
+                            <td class="py-3 px-4 font-semibold text-slate-900">
                                 <div>{{ expense.description }}</div>
                                 <div class="text-[11px] text-slate-400 font-normal mt-0.5">{{ expense.notes || '-' }}</div>
                             </td>
@@ -156,7 +156,7 @@ function getStatusVariant(statusStr: string) {
                             <td class="py-3 px-4 tabular-nums">{{ formatDate(expense.due_date) }}</td>
                             <td class="py-3 px-4 tabular-nums text-slate-500">{{ formatDate(expense.paid_date) }}</td>
                             <td
-                                class="py-3 px-4 text-right font-bold tabular-nums"
+                                class="py-3 px-4 text-right font-semibold tabular-nums"
                                 :class="expense.type === 'income' ? 'text-emerald-600' : 'text-slate-900'"
                             >
                                 {{ formatMoney(expense.amount) }}

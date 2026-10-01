@@ -29,13 +29,13 @@ function formatDate(dateStr?: string | null): string {
         <div class="max-w-5xl mx-auto">
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ customer.name }}</h1>
+                    <h1 class="text-2xl font-semibold text-slate-900">{{ customer.name }}</h1>
                     <p class="text-sm text-slate-500 mt-0.5">{{ customer.email || 'Sem e-mail' }} &bull; {{ customer.phone || 'Sem telefone' }}</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <Link
                         :href="`/customers/${customer.id}/edit`"
-                        class="px-4 py-2 rounded-xl bg-blue-600 text-xs font-semibold text-white hover:bg-blue-700 transition-colors"
+                        class="px-4 py-2 rounded-lg bg-slate-800 text-xs font-semibold text-white hover:bg-slate-900 transition-colors"
                     >
                         Editar
                     </Link>
@@ -49,8 +49,8 @@ function formatDate(dateStr?: string | null): string {
             </div>
 
             <!-- Customer Details Card -->
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs mb-8">
-                <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">Dados Cadastrais</h3>
+            <div class="rounded-xl border border-slate-200 bg-white p-6 mb-8">
+                <h3 class="text-base font-semibold text-slate-900 border-b border-slate-100 pb-3 mb-4">Dados Cadastrais</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 text-sm">
                     <div>
                         <span class="text-xs text-slate-400 block">Endereço</span>
@@ -65,20 +65,20 @@ function formatDate(dateStr?: string | null): string {
                     </div>
                     <div>
                         <span class="text-xs text-slate-400 block">Total de Compras</span>
-                        <span class="font-semibold text-blue-600">{{ customer.sales?.length || 0 }} pedidos</span>
+                        <span class="font-semibold text-slate-900">{{ customer.sales?.length || 0 }} pedidos</span>
                     </div>
                 </div>
             </div>
 
             <!-- Purchases History -->
-            <div class="rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+            <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
                 <div class="p-6 border-b border-slate-100">
-                    <h3 class="text-base font-bold text-slate-900">Histórico de Compras</h3>
+                    <h3 class="text-base font-semibold text-slate-900">Histórico de Compras</h3>
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm text-slate-600">
-                        <thead class="text-xs uppercase bg-slate-50 text-slate-500 border-b border-slate-200">
+                        <thead class="text-xs uppercase bg-slate-50 text-slate-500 font-medium border-b border-slate-200">
                             <tr>
                                 <th class="py-3 px-4">#ID Venda</th>
                                 <th class="py-3 px-4">Data</th>
@@ -104,7 +104,7 @@ function formatDate(dateStr?: string | null): string {
                                     </Badge>
                                 </td>
                                 <td class="py-3.5 px-4 text-right">
-                                    <Link :href="`/sales/${sale.id}`" class="text-xs font-semibold text-blue-600 hover:text-blue-800">
+                                    <Link :href="`/sales/${sale.id}`" class="text-xs font-semibold text-slate-600 hover:text-slate-900">
                                         Ver Pedido
                                     </Link>
                                 </td>

@@ -169,15 +169,15 @@ function formatMoney(value: number): string {
 
         <div class="max-w-6xl mx-auto">
             <!-- Header -->
-            <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-200/80">
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">
                 <div class="flex items-center gap-3">
-                    <div class="h-10 w-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-xs">
+                    <div class="h-10 w-10 rounded-lg bg-slate-800 text-white flex items-center justify-center font-semibold">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold tracking-tight text-slate-900">Ponto de Venda (PDV)</h1>
+                        <h1 class="text-xl font-semibold text-slate-900">Ponto de Venda (PDV)</h1>
                         <p class="text-xs text-slate-500">Emissão ágil de pedido com concorrência e autoridade de preço do servidor.</p>
                     </div>
                 </div>
@@ -194,13 +194,13 @@ function formatMoney(value: number): string {
                 <!-- Left: Catalog and Cart Builder -->
                 <div class="lg:col-span-2 space-y-5">
                     <!-- Customer & Payment Setup -->
-                    <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-2xs">
+                    <div class="rounded-xl border border-slate-200 bg-white p-5">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 tracking-wide mb-1.5">Cliente (Opcional)</label>
+                                <label class="block text-xs font-medium text-slate-700 mb-1.5">Cliente (Opcional)</label>
                                 <select
                                     v-model="form.customer_id"
-                                    class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs text-slate-800 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all cursor-pointer"
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs text-slate-800 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-colors cursor-pointer"
                                 >
                                     <option value="">Consumidor Final (Avulso)</option>
                                     <option v-for="c in customers" :key="c.id" :value="c.id">{{ c.name }}</option>
@@ -208,11 +208,11 @@ function formatMoney(value: number): string {
                             </div>
 
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 tracking-wide mb-1.5">Forma de Pagamento *</label>
+                                <label class="block text-xs font-medium text-slate-700 mb-1.5">Forma de Pagamento *</label>
                                 <select
                                     v-model="form.payment_method_id"
                                     required
-                                    class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs text-slate-800 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all cursor-pointer font-medium"
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs text-slate-800 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-colors cursor-pointer font-medium"
                                 >
                                     <option v-for="pm in paymentMethods" :key="pm.id" :value="pm.id">{{ pm.name }}</option>
                                 </select>
@@ -221,23 +221,23 @@ function formatMoney(value: number): string {
                     </div>
 
                     <!-- Search & Quick Selection -->
-                    <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-2xs space-y-4">
-                        <span class="text-xs font-bold text-slate-900 uppercase tracking-wider block">1. Adicionar Produtos</span>
+                    <div class="rounded-xl border border-slate-200 bg-white p-5 space-y-4">
+                        <span class="text-xs font-semibold text-slate-900 uppercase block">1. Adicionar Produtos</span>
 
                         <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
                             <div class="sm:col-span-8 relative">
-                                <label class="block text-[11px] font-semibold text-slate-500 mb-1">Buscar por Nome</label>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1">Buscar por Nome</label>
                                 <input
                                     v-model="searchQuery"
                                     type="text"
                                     placeholder="Digite o nome do produto..."
-                                    class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all"
+                                    class="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-colors"
                                 />
 
                                 <!-- Live Autocomplete dropdown -->
                                 <div
                                     v-if="searchQuery && filteredProducts.length"
-                                    class="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl border border-slate-200 shadow-lg z-30 max-h-48 overflow-y-auto divide-y divide-slate-100"
+                                    class="absolute left-0 right-0 top-full mt-1 bg-white rounded-lg border border-slate-200 shadow-lg z-30 max-h-48 overflow-y-auto divide-y divide-slate-100"
                                 >
                                     <button
                                         v-for="p in filteredProducts"
@@ -249,20 +249,20 @@ function formatMoney(value: number): string {
                                         <span class="font-medium text-slate-800">{{ p.name }}</span>
                                         <div class="flex items-center gap-2">
                                             <span class="text-slate-400">Estoque: {{ p.stock }}</span>
-                                            <span class="font-bold text-slate-900 tabular-nums">{{ formatMoney(p.price) }}</span>
+                                            <span class="font-semibold text-slate-900 tabular-nums">{{ formatMoney(p.price) }}</span>
                                         </div>
                                     </button>
                                 </div>
                             </div>
 
                             <div class="sm:col-span-2">
-                                <label class="block text-[11px] font-semibold text-slate-500 mb-1">Quantidade</label>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1">Quantidade</label>
                                 <input
                                     v-model.number="selectedQuantity"
                                     type="number"
                                     min="1"
                                     :max="currentProduct?.stock || 999"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-center font-bold tabular-nums focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
+                                    class="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-center font-semibold tabular-nums focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
                                 />
                             </div>
 
@@ -279,16 +279,16 @@ function formatMoney(value: number): string {
                             </div>
                         </div>
 
-                        <div v-if="currentProduct" class="p-2.5 rounded-xl bg-blue-50/70 border border-blue-100 flex items-center justify-between text-xs text-blue-900">
+                        <div v-if="currentProduct" class="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between text-xs text-slate-700">
                             <span>Item Selecionado: <strong>{{ currentProduct.name }}</strong></span>
                             <span>Valor Oficial: <strong>{{ formatMoney(currentProduct.price) }}</strong> | Disponível: <strong>{{ currentProduct.stock }}</strong></span>
                         </div>
                     </div>
 
                     <!-- Items Cart Table -->
-                    <div class="rounded-2xl border border-slate-200/80 bg-white shadow-2xs overflow-hidden">
+                    <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
                         <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50/40">
-                            <span class="text-xs font-bold text-slate-900 uppercase tracking-wider">2. Itens no Pedido ({{ items.length }})</span>
+                            <span class="text-xs font-semibold text-slate-900 uppercase">2. Itens no Pedido ({{ items.length }})</span>
                             <span class="text-xs text-slate-400">Preço recalculado pelo servidor</span>
                         </div>
 
@@ -313,27 +313,27 @@ function formatMoney(value: number): string {
                                                 <button
                                                     type="button"
                                                     @click="updateQuantity(idx, -1)"
-                                                    class="h-6 w-6 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center transition-colors cursor-pointer"
+                                                    class="h-6 w-6 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold flex items-center justify-center transition-colors cursor-pointer"
                                                 >
                                                     -
                                                 </button>
-                                                <span class="w-8 text-center font-bold tabular-nums text-slate-900">{{ item.quantity }}</span>
+                                                <span class="w-8 text-center font-semibold tabular-nums text-slate-900">{{ item.quantity }}</span>
                                                 <button
                                                     type="button"
                                                     @click="updateQuantity(idx, 1)"
-                                                    class="h-6 w-6 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center transition-colors cursor-pointer"
+                                                    class="h-6 w-6 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold flex items-center justify-center transition-colors cursor-pointer"
                                                 >
                                                     +
                                                 </button>
                                             </div>
                                         </td>
                                         <td class="py-3 px-4 text-right tabular-nums">{{ formatMoney(item.price) }}</td>
-                                        <td class="py-3 px-4 text-right font-bold text-slate-900 tabular-nums">{{ formatMoney(item.price * item.quantity) }}</td>
+                                        <td class="py-3 px-4 text-right font-semibold text-slate-900 tabular-nums">{{ formatMoney(item.price * item.quantity) }}</td>
                                         <td class="py-3 px-4 text-center">
                                             <button
                                                 type="button"
                                                 @click="removeItem(idx)"
-                                                class="text-rose-400 hover:text-rose-600 font-bold text-sm cursor-pointer p-1"
+                                                class="text-rose-400 hover:text-rose-600 font-semibold text-sm cursor-pointer p-1"
                                                 title="Remover item"
                                             >
                                                 &times;
@@ -353,40 +353,40 @@ function formatMoney(value: number): string {
 
                 <!-- Right: Summary & Checkout Card -->
                 <div class="space-y-5">
-                    <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs space-y-5 sticky top-8">
-                        <span class="text-xs font-bold text-slate-900 uppercase tracking-wider block border-b border-slate-100 pb-3">Resumo Financeiro</span>
+                    <div class="rounded-xl border border-slate-200 bg-white p-6 space-y-5 sticky top-8">
+                        <span class="text-xs font-semibold text-slate-900 uppercase block border-b border-slate-100 pb-3">Resumo Financeiro</span>
 
                         <div class="space-y-3 text-xs">
                             <div class="flex justify-between text-slate-500 font-medium">
                                 <span>Subtotal Bruto</span>
-                                <span class="font-bold text-slate-900 tabular-nums">{{ formatMoney(subtotal) }}</span>
+                                <span class="font-semibold text-slate-900 tabular-nums">{{ formatMoney(subtotal) }}</span>
                             </div>
 
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-500 mb-1">Desconto Aplicado (R$)</label>
+                                <label class="block text-[11px] font-medium text-slate-500 mb-1">Desconto Aplicado (R$)</label>
                                 <input
                                     v-model.number="form.discount"
                                     type="number"
                                     step="0.01"
                                     min="0"
                                     :max="subtotal"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-1.5 text-xs text-slate-900 font-bold tabular-nums focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
+                                    class="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-900 font-semibold tabular-nums focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
                                     placeholder="0,00"
                                 />
                             </div>
 
                             <div class="pt-3 border-t border-slate-100 flex justify-between items-baseline">
-                                <span class="text-sm font-bold text-slate-900">Total Líquido</span>
-                                <span class="text-2xl font-black text-blue-600 tabular-nums tracking-tight">{{ formatMoney(totalAmount) }}</span>
+                                <span class="text-sm font-semibold text-slate-900">Total Líquido</span>
+                                <span class="text-2xl font-semibold text-slate-900 tabular-nums">{{ formatMoney(totalAmount) }}</span>
                             </div>
                         </div>
 
                         <!-- Installments Options -->
                         <div class="pt-4 border-t border-slate-100 space-y-2.5">
-                            <label class="block text-[11px] font-semibold text-slate-500">Parcelamento</label>
+                            <label class="block text-[11px] font-medium text-slate-500">Parcelamento</label>
                             <select
                                 v-model.number="form.installments"
-                                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 font-semibold focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer"
+                                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-800 font-semibold focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer"
                             >
                                 <option v-for="n in 12" :key="n" :value="n">
                                     {{ n }}x {{ n === 1 ? 'à vista' : 'mensais' }}
@@ -394,7 +394,7 @@ function formatMoney(value: number): string {
                             </select>
 
                             <!-- Breakdown preview without cent loss -->
-                            <div v-if="form.installments > 1" class="rounded-xl bg-slate-50 p-3 space-y-1 text-[11px] border border-slate-100">
+                            <div v-if="form.installments > 1" class="rounded-lg bg-slate-50 p-3 space-y-1 text-[11px] border border-slate-100">
                                 <div class="font-semibold text-slate-700 mb-1">Cronograma de Vencimentos:</div>
                                 <div
                                     v-for="inst in calculatedInstallments"
@@ -402,18 +402,18 @@ function formatMoney(value: number): string {
                                     class="flex justify-between text-slate-600 tabular-nums"
                                 >
                                     <span>{{ inst.number }}ª Parcela ({{ inst.date }})</span>
-                                    <span class="font-bold text-slate-900">{{ formatMoney(inst.amount) }}</span>
+                                    <span class="font-semibold text-slate-900">{{ formatMoney(inst.amount) }}</span>
                                 </div>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Observações Internas</label>
+                            <label class="block text-[11px] font-medium text-slate-500 mb-1">Observações Internas</label>
                             <textarea
                                 v-model="form.notes"
                                 rows="2"
                                 placeholder="Anotações de balcão..."
-                                class="w-full rounded-xl border border-slate-200 px-3 py-1.5 text-xs text-slate-900 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 placeholder:text-slate-400"
+                                class="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-900 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 placeholder:text-slate-400"
                             />
                         </div>
 

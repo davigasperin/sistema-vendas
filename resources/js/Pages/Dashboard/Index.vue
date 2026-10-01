@@ -64,7 +64,7 @@ const expensePercentage = 100 - incomePercentage;
         <!-- Page Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
-                <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Dashboard</h1>
+                <h1 class="text-2xl font-semibold text-slate-900">Dashboard</h1>
                 <p class="text-xs text-slate-500 mt-1">Métricas em tempo real de vendas, fluxo de caixa e estoques.</p>
             </div>
             <div class="flex items-center gap-2.5">

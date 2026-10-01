@@ -34,7 +34,7 @@ function formatDate(dateStr?: string | null): string {
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-slate-900">Clientes</h1>
+                <h1 class="text-2xl font-semibold text-slate-900">Clientes</h1>
                 <p class="text-xs text-slate-500 mt-1">Cadastro de clientes, contatos e histórico de compras realizadas.</p>
             </div>
             <Link href="/customers/create">
@@ -49,24 +49,24 @@ function formatDate(dateStr?: string | null): string {
 
         <!-- Quick Counters -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <div class="p-4 rounded-2xl border border-slate-200/80 bg-white shadow-2xs flex items-center justify-between">
+            <div class="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
                 <div>
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Base Total</span>
-                    <span class="text-xl font-bold text-slate-900 tabular-nums">{{ totalCustomers }} clientes</span>
+                    <span class="text-xs font-medium text-slate-400 uppercase block">Base Total</span>
+                    <span class="text-xl font-semibold text-slate-900 tabular-nums">{{ totalCustomers }} clientes</span>
                 </div>
-                <div class="h-9 w-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                <div class="h-9 w-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                 </div>
             </div>
 
-            <div class="p-4 rounded-2xl border border-slate-200/80 bg-white shadow-2xs flex items-center justify-between">
+            <div class="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
                 <div>
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Novos no Mês</span>
-                    <span class="text-xl font-bold text-emerald-600 tabular-nums">+{{ newThisMonth }}</span>
+                    <span class="text-xs font-medium text-slate-400 uppercase block">Novos no Mês</span>
+                    <span class="text-xl font-semibold text-slate-900 tabular-nums">+{{ newThisMonth }}</span>
                 </div>
-                <div class="h-9 w-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                <div class="h-9 w-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
@@ -75,14 +75,14 @@ function formatDate(dateStr?: string | null): string {
         </div>
 
         <!-- Filter Bar -->
-        <div class="rounded-2xl border border-slate-200/80 bg-white p-4 mb-6 shadow-2xs flex flex-col sm:flex-row gap-3 items-center justify-between">
+        <div class="rounded-xl border border-slate-200 bg-white p-4 mb-6 flex flex-col sm:flex-row gap-3 items-center justify-between">
             <div class="w-full sm:max-w-md">
                 <input
                     v-model="search"
                     @keyup.enter="handleSearch"
                     type="text"
                     placeholder="Buscar por nome, e-mail ou telefone..."
-                    class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all"
+                    class="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-colors"
                 />
             </div>
             <AppButton variant="secondary" size="sm" @click="handleSearch">
@@ -91,10 +91,10 @@ function formatDate(dateStr?: string | null): string {
         </div>
 
         <!-- Data Table -->
-        <div class="rounded-2xl border border-slate-200/80 bg-white shadow-2xs overflow-hidden">
+        <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs text-slate-600">
-                    <thead class="uppercase bg-slate-50/80 text-slate-500 font-semibold border-b border-slate-200/80">
+                    <thead class="uppercase bg-slate-50/80 text-slate-500 font-medium border-b border-slate-200">
                         <tr>
                             <th class="py-3 px-4">Nome do Cliente</th>
                             <th class="py-3 px-4">Contato & Endereço</th>
@@ -109,7 +109,7 @@ function formatDate(dateStr?: string | null): string {
                             class="hover:bg-slate-50/60 transition-colors"
                         >
                             <td class="py-3 px-4">
-                                <div class="font-bold text-slate-900">{{ customer.name }}</div>
+                                <div class="font-semibold text-slate-900">{{ customer.name }}</div>
                                 <div class="text-[11px] text-slate-400 mt-0.5">ID: #{{ customer.id }}</div>
                             </td>
                             <td class="py-3 px-4">
@@ -123,7 +123,7 @@ function formatDate(dateStr?: string | null): string {
                             <td class="py-3 px-4 text-right space-x-2">
                                 <Link
                                     :href="`/customers/${customer.id}`"
-                                    class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors"
+                                    class="text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
                                 >
                                     Histórico
                                 </Link>

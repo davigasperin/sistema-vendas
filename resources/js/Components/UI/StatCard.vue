@@ -14,7 +14,7 @@ defineProps<{
             <slot name="icon" />
         </div>
         <div class="mt-3 flex items-baseline">
-            <span class="text-2xl font-semibold tracking-tight text-slate-900">{{ value }}</span>
+            <span class="text-2xl font-semibold text-slate-900">{{ value }}</span>
         </div>
         <p v-if="subtitle" class="mt-1 text-xs text-slate-500">{{ subtitle }}</p>
     </div>

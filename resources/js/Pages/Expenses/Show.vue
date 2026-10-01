@@ -34,7 +34,7 @@ function deleteExpense() {
         <div class="max-w-3xl mx-auto space-y-8">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ expense.description }}</h1>
+                    <h1 class="text-2xl font-semibold text-slate-900">{{ expense.description }}</h1>
                     <Badge :variant="expense.status === 'paid' ? 'success' : expense.status === 'overdue' ? 'danger' : 'warning'">
                         {{ expense.status_label }}
                     </Badge>
@@ -42,7 +42,7 @@ function deleteExpense() {
                 <div class="flex items-center gap-2">
                     <Link
                         :href="`/expenses/${expense.id}/edit`"
-                        class="px-4 py-2 rounded-xl bg-blue-600 text-xs font-semibold text-white hover:bg-blue-700 transition-colors"
+                        class="px-4 py-2 rounded-lg bg-slate-800 text-xs font-semibold text-white hover:bg-slate-900 transition-colors"
                     >
                         Editar
                     </Link>
@@ -50,7 +50,7 @@ function deleteExpense() {
                         v-if="expense.status !== 'paid'"
                         type="button"
                         @click="markPaid"
-                        class="px-4 py-2 rounded-xl bg-emerald-600 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors"
+                        class="px-4 py-2 rounded-lg bg-emerald-600 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors"
                     >
                         Marcar como Pago
                     </button>
@@ -64,24 +64,24 @@ function deleteExpense() {
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Valor</span>
-                    <p class="text-2xl font-black mt-1" :class="expense.type === 'income' ? 'text-emerald-600' : 'text-rose-600'">
+                <div class="rounded-xl border border-slate-200 bg-white p-5">
+                    <span class="text-xs font-medium text-slate-400 uppercase">Valor</span>
+                    <p class="text-2xl font-semibold mt-1" :class="expense.type === 'income' ? 'text-emerald-600' : 'text-rose-600'">
                         {{ formatMoney(expense.amount) }}
                     </p>
                 </div>
-                <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Tipo</span>
-                    <p class="text-base font-bold text-slate-900 mt-1">{{ expense.type_label }}</p>
+                <div class="rounded-xl border border-slate-200 bg-white p-5">
+                    <span class="text-xs font-medium text-slate-400 uppercase">Tipo</span>
+                    <p class="text-base font-semibold text-slate-900 mt-1">{{ expense.type_label }}</p>
                 </div>
-                <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Categoria</span>
-                    <p class="text-base font-bold text-slate-900 mt-1">{{ expense.category?.name || '-' }}</p>
+                <div class="rounded-xl border border-slate-200 bg-white p-5">
+                    <span class="text-xs font-medium text-slate-400 uppercase">Categoria</span>
+                    <p class="text-base font-semibold text-slate-900 mt-1">{{ expense.category?.name || '-' }}</p>
                 </div>
             </div>
 
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-4">
-                <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">Detalhes</h3>
+            <div class="rounded-xl border border-slate-200 bg-white p-6 space-y-4">
+                <h3 class="text-base font-semibold text-slate-900 border-b border-slate-100 pb-3">Detalhes</h3>
                 <div class="grid grid-cols-2 gap-4 text-sm">
                     <div>
                         <span class="text-xs text-slate-400 block">Data de Vencimento</span>
