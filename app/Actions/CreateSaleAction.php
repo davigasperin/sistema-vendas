@@ -11,6 +11,7 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\StockMovement;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CreateSaleAction
 {
@@ -20,7 +21,7 @@ class CreateSaleAction
 
     public function __invoke(CreateSaleDTO $dto): Sale
     {
-        return DB::transaction(function () use ($dto) {
+        $sale = DB::transaction(function () use ($dto) {
             $productQuantities = [];
             foreach ($dto->items as $itemDTO) {
                 $productId = $itemDTO->productId;
@@ -127,5 +128,15 @@ class CreateSaleAction
 
             return $sale;
         });
+
+        Log::info('Venda criada', [
+            'sale_id' => $sale->id,
+            'user_id' => $dto->userId,
+            'total' => $sale->total_amount,
+            'installments' => $dto->installments,
+            'items_count' => count($dto->items),
+        ]);
+
+        return $sale;
     }
 }

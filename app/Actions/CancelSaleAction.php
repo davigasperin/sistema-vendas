@@ -9,12 +9,13 @@ use App\Models\Product;
 use App\Models\Sale;
 use App\Models\StockMovement;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CancelSaleAction
 {
     public function __invoke(Sale $sale, ?int $userId = null): Sale
     {
-        return DB::transaction(function () use ($sale, $userId) {
+        $cancelledSale = DB::transaction(function () use ($sale, $userId) {
             $lockedSale = Sale::where('id', $sale->id)->lockForUpdate()->firstOrFail();
 
             if ($lockedSale->status === SaleStatus::Cancelled) {
@@ -61,5 +62,13 @@ class CancelSaleAction
 
             return $lockedSale->fresh();
         });
+
+        Log::info('Venda cancelada', [
+            'sale_id' => $cancelledSale->id,
+            'user_id' => $userId ?? auth()->id(),
+            'total' => $cancelledSale->total_amount,
+        ]);
+
+        return $cancelledSale;
     }
 }

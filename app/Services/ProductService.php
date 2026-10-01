@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Product;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class ProductService
 {
@@ -79,8 +80,18 @@ class ProductService
 
     public function adjustStock(Product $product, int $adjustment): int
     {
+        $previousStock = (int) $product->stock;
         $newStock = max(0, $product->stock + $adjustment);
         $product->update(['stock' => $newStock]);
+
+        Log::info('Ajuste manual de estoque', [
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'adjustment' => $adjustment,
+            'previous_stock' => $previousStock,
+            'new_stock' => $newStock,
+            'user_id' => auth()->id(),
+        ]);
 
         return $newStock;
     }
