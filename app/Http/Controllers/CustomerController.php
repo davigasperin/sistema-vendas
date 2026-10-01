@@ -11,7 +11,10 @@ use Illuminate\View\View;
 
 class CustomerController extends Controller
 {
-    public function __construct(private CustomerService $customerService) {}
+    public function __construct(private CustomerService $customerService)
+    {
+        $this->authorizeResource(Customer::class, 'customer');
+    }
 
     public function index(Request $request): View
     {

@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleInstallment;
 use App\Models\SaleItem;
+use App\Models\StockMovement;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -57,5 +58,11 @@ class FactorySmokeTest extends TestCase
             'category_id' => $category->id,
         ]);
         $this->assertDatabaseHas('expenses', ['id' => $expense->id]);
+
+        $movement = StockMovement::factory()->create([
+            'product_id' => $product->id,
+            'user_id' => $user->id,
+        ]);
+        $this->assertDatabaseHas('stock_movements', ['id' => $movement->id]);
     }
 }

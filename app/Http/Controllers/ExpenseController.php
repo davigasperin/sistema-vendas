@@ -13,7 +13,10 @@ use Illuminate\View\View;
 
 class ExpenseController extends Controller
 {
-    public function __construct(private ExpenseService $expenseService) {}
+    public function __construct(private ExpenseService $expenseService)
+    {
+        $this->authorizeResource(Expense::class, 'expense');
+    }
 
     public function index(Request $request): View
     {

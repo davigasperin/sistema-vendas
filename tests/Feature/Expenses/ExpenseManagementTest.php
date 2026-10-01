@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Expenses;
 
+use App\Enums\ExpenseStatus;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\User;
@@ -17,7 +18,7 @@ class ExpenseManagementTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
+        $this->user = User::factory()->financial()->create();
     }
 
     public function test_can_list_expenses(): void
@@ -65,7 +66,7 @@ class ExpenseManagementTest extends TestCase
         );
 
         $response->assertOk();
-        $this->assertEquals(Expense::STATUS_PAID, $expense->fresh()->status);
+        $this->assertEquals(ExpenseStatus::Paid, $expense->fresh()->status);
         $this->assertNotNull($expense->fresh()->paid_date);
     }
 }

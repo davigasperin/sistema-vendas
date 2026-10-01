@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\SaleStatus;
 use App\Models\Customer;
 use App\Models\PaymentMethod;
 use App\Models\Sale;
@@ -22,6 +23,7 @@ class SaleFactory extends Factory
             'customer_id' => Customer::factory(),
             'payment_method_id' => PaymentMethod::factory(),
             'total_amount' => 100.00,
+            'status' => SaleStatus::Completed,
             'installments' => 1,
             'discount' => 0.00,
             'notes' => fake()->optional()->sentence(),

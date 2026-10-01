@@ -11,7 +11,10 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function __construct(private ProductService $productService) {}
+    public function __construct(private ProductService $productService)
+    {
+        $this->authorizeResource(Product::class, 'product');
+    }
 
     public function index(Request $request): View
     {

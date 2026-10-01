@@ -33,6 +33,14 @@ class Product extends Model
         return $this->hasMany(SaleItem::class);
     }
 
+    /**
+     * @return HasMany<StockMovement, $this>
+     */
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('active', true);

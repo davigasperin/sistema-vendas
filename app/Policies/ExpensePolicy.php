@@ -28,7 +28,7 @@ class ExpensePolicy
             return false;
         }
 
-        return $expense->status !== Expense::STATUS_PAID;
+        return ! $expense->isPaid();
     }
 
     public function delete(User $user, Expense $expense): bool
@@ -37,13 +37,13 @@ class ExpensePolicy
             return false;
         }
 
-        return $expense->status !== Expense::STATUS_PAID;
+        return ! $expense->isPaid();
     }
 
     public function markPaid(User $user, Expense $expense): bool
     {
         return $user->canManageExpenses()
-            && $expense->status === Expense::STATUS_PENDING;
+            && $expense->isPending();
     }
 
     public function report(User $user): bool

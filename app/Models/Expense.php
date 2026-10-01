@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\ExpenseStatus;
+use App\Enums\ExpenseType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,9 +40,24 @@ class Expense extends Model
         'amount' => 'decimal:2',
         'due_date' => 'date',
         'paid_date' => 'date',
-        'type' => 'string',
-        'status' => 'string',
+        'type' => ExpenseType::class,
+        'status' => ExpenseStatus::class,
     ];
+
+    public function isPaid(): bool
+    {
+        return $this->status === ExpenseStatus::Paid;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === ExpenseStatus::Pending;
+    }
+
+    public function isOverdue(): bool
+    {
+        return $this->status === ExpenseStatus::Overdue;
+    }
 
     public function category(): BelongsTo
     {

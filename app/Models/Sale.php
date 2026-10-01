@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SaleStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,11 +16,12 @@ class Sale extends Model
 
     protected $fillable = [
         'customer_id', 'payment_method_id',
-        'total_amount', 'installments', 'discount', 'notes',
+        'total_amount', 'status', 'installments', 'discount', 'notes',
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'status' => SaleStatus::class,
         'discount' => 'decimal:2',
         'installments' => 'integer',
     ];

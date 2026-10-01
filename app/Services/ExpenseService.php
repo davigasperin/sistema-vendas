@@ -61,7 +61,7 @@ class ExpenseService
 
         $expense->update($data);
 
-        if ($expense->status === Expense::STATUS_PENDING && $expense->due_date < now()->toDateString()) {
+        if ($expense->isPending() && $expense->due_date < now()->toDateString()) {
             $expense->update(['status' => Expense::STATUS_OVERDUE]);
         }
 
@@ -104,13 +104,13 @@ class ExpenseService
 
     public function isPaid(Expense $expense): bool
     {
-        return $expense->status === Expense::STATUS_PAID;
+        return $expense->isPaid();
     }
 
     public function isOverdue(Expense $expense): bool
     {
-        return $expense->status === Expense::STATUS_OVERDUE ||
-            ($expense->status === Expense::STATUS_PENDING && $expense->due_date < now()->toDateString());
+        return $expense->isOverdue() ||
+            ($expense->isPending() && $expense->due_date < now()->toDateString());
     }
 
     public function deleteExpense(Expense $expense): void

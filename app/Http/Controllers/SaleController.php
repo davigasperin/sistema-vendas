@@ -10,7 +10,10 @@ use Illuminate\Http\Request;
 
 class SaleController extends Controller
 {
-    public function __construct(private SaleService $saleService) {}
+    public function __construct(private SaleService $saleService)
+    {
+        $this->authorizeResource(Sale::class, 'sale');
+    }
 
     public function index(Request $request)
     {
@@ -61,9 +64,9 @@ class SaleController extends Controller
         return redirect()->route('sales.index')->with('success', 'Venda excluída com sucesso!');
     }
 
-    public function restore(int $id)
+    public function restore(Sale $sale)
     {
-        $sale = Sale::onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $sale);
         $sale->restore();
 
         return redirect()->route('sales.index')->with('success', 'Venda restaurada com sucesso!');
