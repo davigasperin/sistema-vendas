@@ -67,7 +67,7 @@ class SaleController extends Controller
     public function restore(Sale $sale)
     {
         $this->authorize('restore', $sale);
-        $sale->restore();
+        $this->saleService->restoreSale($sale);
 
         return redirect()->route('sales.index')->with('success', 'Venda restaurada com sucesso!');
     }

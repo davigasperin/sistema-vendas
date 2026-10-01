@@ -2,10 +2,14 @@
 
 namespace App\Actions;
 
+use App\DTOs\CreateSaleDTO;
+use App\Enums\SaleStatus;
+use App\Enums\StockMovementType;
 use App\Exceptions\InsufficientStockException;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
+use App\Models\StockMovement;
 use Illuminate\Support\Facades\DB;
 
 class CreateSaleAction
@@ -14,69 +18,114 @@ class CreateSaleAction
         private GenerateInstallmentsAction $generateInstallmentsAction
     ) {}
 
-    public function __invoke(array $data): Sale
+    public function __invoke(CreateSaleDTO $dto): Sale
     {
-        return DB::transaction(function () use ($data) {
-            $items = $data['items'];
-            unset($data['items']);
-
-            $installmentAmounts = $data['installment_amounts'] ?? [];
-            $installmentDates = $data['installment_dates'] ?? [];
-            unset($data['installment_amounts'], $data['installment_dates']);
-
-            $this->validateStock($items);
-
-            $data['user_id'] = auth()->id();
-            $data['total_amount'] = $this->calculateTotal($items, $data['discount'] ?? 0);
-
-            $sale = new Sale;
-            $sale->forceFill($data)->save();
-
-            foreach ($items as $item) {
-                SaleItem::create([
-                    'sale_id' => $sale->id,
-                    'product_id' => $item['product_id'],
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['unit_price'],
-                    'subtotal' => $item['subtotal'],
-                ]);
-
-                Product::where('id', $item['product_id'])->decrement('stock', $item['quantity']);
+        return DB::transaction(function () use ($dto) {
+            $productQuantities = [];
+            foreach ($dto->items as $itemDTO) {
+                $productId = $itemDTO->productId;
+                $productQuantities[$productId] = ($productQuantities[$productId] ?? 0) + $itemDTO->quantity;
             }
 
-            if (($data['installments'] ?? 1) > 0) {
+            $products = Product::whereIn('id', array_keys($productQuantities))->lockForUpdate()->get()->keyBy('id');
+
+            $sale = new Sale;
+            $sale->forceFill([
+                'user_id' => $dto->userId,
+                'customer_id' => $dto->customerId,
+                'payment_method_id' => $dto->paymentMethodId,
+                'status' => SaleStatus::Completed,
+                'installments' => $dto->installments,
+                'discount' => $dto->discount,
+                'notes' => $dto->notes,
+                'total_amount' => 0,
+            ])->save();
+
+            $subtotalCents = 0;
+            $mappedItems = [];
+
+            foreach ($dto->items as $itemDTO) {
+                $product = $products->get($itemDTO->productId);
+
+                if (! $product || ! $product->active) {
+                    throw new InsufficientStockException(
+                        $product ? $product->name : 'Produto não encontrado',
+                        $itemDTO->quantity,
+                        $product ? $product->stock : 0
+                    );
+                }
+
+                if ($product->stock < $itemDTO->quantity) {
+                    throw new InsufficientStockException(
+                        $product->name,
+                        $itemDTO->quantity,
+                        $product->stock
+                    );
+                }
+
+                $unitPriceCents = (int) round((float) $product->price * 100);
+                $subtotalItemCents = $unitPriceCents * $itemDTO->quantity;
+                $subtotalCents += $subtotalItemCents;
+
+                $mappedItems[] = [
+                    'product' => $product,
+                    'quantity' => $itemDTO->quantity,
+                    'unit_price_cents' => $unitPriceCents,
+                    'subtotal_cents' => $subtotalItemCents,
+                ];
+            }
+
+            $discountCents = (int) round($dto->discount * 100);
+            if ($discountCents > $subtotalCents) {
+                $discountCents = $subtotalCents;
+            }
+
+            $totalCents = $subtotalCents - $discountCents;
+
+            $sale->total_amount = round($totalCents / 100, 2);
+            $sale->discount = round($discountCents / 100, 2);
+            $sale->save();
+
+            foreach ($mappedItems as $mappedItem) {
+                $product = $mappedItem['product'];
+                $quantity = $mappedItem['quantity'];
+                $previousStock = (int) $product->stock;
+                $newStock = $previousStock - $quantity;
+
+                SaleItem::create([
+                    'sale_id' => $sale->id,
+                    'product_id' => $product->id,
+                    'quantity' => $quantity,
+                    'unit_price' => round($mappedItem['unit_price_cents'] / 100, 2),
+                    'subtotal' => round($mappedItem['subtotal_cents'] / 100, 2),
+                ]);
+
+                $product->stock = $newStock;
+                $product->save();
+
+                StockMovement::create([
+                    'product_id' => $product->id,
+                    'type' => StockMovementType::Sale,
+                    'quantity' => -$quantity,
+                    'previous_stock' => $previousStock,
+                    'new_stock' => $newStock,
+                    'reference_type' => Sale::class,
+                    'reference_id' => $sale->id,
+                    'reason' => "Venda #{$sale->id}",
+                    'user_id' => $dto->userId,
+                ]);
+            }
+
+            if ($dto->installments > 0) {
                 ($this->generateInstallmentsAction)(
                     $sale,
-                    $installmentAmounts,
-                    $installmentDates,
-                    (int) ($data['installments'] ?? 1)
+                    $dto->installmentAmounts,
+                    $dto->installmentDates,
+                    $dto->installments
                 );
             }
 
             return $sale;
         });
-    }
-
-    protected function validateStock(array $items): void
-    {
-        foreach ($items as $item) {
-            $product = Product::find($item['product_id']);
-            if ($product && $product->stock < $item['quantity']) {
-                throw new InsufficientStockException(
-                    $product->name,
-                    $item['quantity'],
-                    $product->stock
-                );
-            }
-        }
-    }
-
-    protected function calculateTotal(array $items, float $discount = 0): float
-    {
-        $subtotal = collect($items)->sum(function ($item) {
-            return $item['quantity'] * $item['unit_price'];
-        });
-
-        return max(0, $subtotal - $discount);
     }
 }

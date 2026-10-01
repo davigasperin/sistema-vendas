@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Sales;
 
+use App\Enums\StockMovementType;
 use App\Exceptions\InsufficientStockException;
 use App\Models\Customer;
 use App\Models\PaymentMethod;
@@ -105,10 +106,8 @@ class SaleCreationTest extends TestCase
         $this->actingAs($this->user)->post(route('sales.store'), $payload);
     }
 
-    public function test_characterization_client_can_currently_manipulate_price(): void
+    public function test_backend_enforces_price_authority_ignoring_client_manipulated_price(): void
     {
-        // Documentando vulnerabilidade atual da Fase 0:
-        // O produto custa R$ 500,00 no banco, mas o cliente envia unit_price = 1.00
         $product = Product::factory()->create([
             'price' => 500.00,
             'stock' => 10,
@@ -124,20 +123,35 @@ class SaleCreationTest extends TestCase
                 [
                     'product_id' => $product->id,
                     'quantity' => 1,
-                    'unit_price' => 1.00, // Preço manipulado!
+                    'unit_price' => 1.00, // Preço fraudulento enviado pelo cliente!
                     'subtotal' => 1.00,
                 ],
             ],
-            'installment_amounts' => [1.00],
+            'installment_amounts' => [500.00],
             'installment_dates' => [now()->addMonth()->format('Y-m-d')],
         ];
 
         $response = $this->actingAs($this->user)->post(route('sales.store'), $payload);
 
         $response->assertRedirect(route('sales.index'));
-        // Na Fase 0/1 isso infelizmente grava 1.00. Na Fase 3 nós tornaremos o backend a autoridade estrita!
+
+        // O backend ignorou 1.00 e usou o preço oficial do banco (500.00)
         $this->assertDatabaseHas('sales', [
-            'total_amount' => 1.00,
+            'total_amount' => 500.00,
+        ]);
+
+        $this->assertDatabaseHas('sale_items', [
+            'product_id' => $product->id,
+            'unit_price' => 500.00,
+            'subtotal' => 500.00,
+        ]);
+
+        $this->assertDatabaseHas('stock_movements', [
+            'product_id' => $product->id,
+            'type' => StockMovementType::Sale,
+            'quantity' => -1,
+            'previous_stock' => 10,
+            'new_stock' => 9,
         ]);
     }
 }

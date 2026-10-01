@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Product;
 use App\Rules\InstallmentsSumRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,8 +25,8 @@ class SaleRequest extends FormRequest
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
-            'items.*.unit_price' => 'required|numeric|min:0',
-            'items.*.subtotal' => 'required|numeric|min:0',
+            'items.*.unit_price' => 'nullable|numeric|min:0',
+            'items.*.subtotal' => 'nullable|numeric|min:0',
             'installment_dates' => 'nullable|array',
             'installment_dates.*' => 'required|date',
             'installment_amounts' => 'nullable|array|min:1',
@@ -53,13 +54,25 @@ class SaleRequest extends FormRequest
 
     protected function calculateItemsTotal(): float
     {
-        $items = $this->input('items', []);
-        $total = 0;
-
-        foreach ($items as $item) {
-            $total += ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0);
+        $items = (array) $this->input('items', []);
+        if (empty($items)) {
+            return 0.0;
         }
 
-        return $total - floatval($this->input('discount', 0));
+        $productIds = array_column($items, 'product_id');
+        $prices = Product::whereIn('id', $productIds)->pluck('price', 'id');
+
+        $totalCents = 0;
+        foreach ($items as $item) {
+            $productId = (int) ($item['product_id'] ?? 0);
+            $quantity = (int) ($item['quantity'] ?? 0);
+            $price = (float) ($prices[$productId] ?? 0);
+            $totalCents += (int) round($price * 100) * $quantity;
+        }
+
+        $discountCents = (int) round(((float) $this->input('discount', 0)) * 100);
+        $netCents = max(0, $totalCents - $discountCents);
+
+        return round($netCents / 100, 2);
     }
 }
