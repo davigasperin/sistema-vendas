@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Enums\ExpenseStatus;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Sale;
+use App\Queries\ExpenseSummaryQuery;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection as SupportCollection;
@@ -42,11 +44,9 @@ class ExpenseService
 
     public function createExpense(array $data): Expense
     {
-        $this->checkOverdue();
+        $data['status'] = $data['status'] ?? ExpenseStatus::Pending->value;
 
-        $data['status'] = $data['status'] ?? Expense::STATUS_PENDING;
-
-        if ($data['status'] === Expense::STATUS_PAID && empty($data['paid_date'])) {
+        if ($data['status'] === ExpenseStatus::Paid->value && empty($data['paid_date'])) {
             $data['paid_date'] = now()->toDateString();
         }
 
@@ -163,10 +163,8 @@ class ExpenseService
 
     public function getOverdueExpenses(): Collection
     {
-        $this->checkOverdue();
-
         return Expense::with('category')
-            ->whereIn('status', [Expense::STATUS_PENDING, Expense::STATUS_OVERDUE])
+            ->whereIn('status', [ExpenseStatus::Pending->value, ExpenseStatus::Overdue->value])
             ->where('due_date', '<', now()->toDateString())
             ->orderBy('due_date', 'asc')
             ->get();
@@ -218,36 +216,8 @@ class ExpenseService
 
     public function getSummaryByPeriod(?string $startDate = null, ?string $endDate = null): array
     {
-        if (! $startDate) {
-            $startDate = now()->startOfMonth()->toDateString();
-        }
-        if (! $endDate) {
-            $endDate = now()->endOfMonth()->toDateString();
-        }
+        $query = new ExpenseSummaryQuery;
 
-        $salesIncome = $this->getSalesIncome($startDate, $endDate);
-        $manualIncome = $this->getTotalByType(Expense::TYPE_INCOME, $startDate, $endDate);
-        $expenses = $this->getTotalByType(Expense::TYPE_EXPENSE, $startDate, $endDate);
-
-        $pendingExpenses = $this->getTotalPendingByType(Expense::TYPE_EXPENSE, $endDate);
-        $overdueCount = $this->getOverdueExpenses()->count();
-
-        return [
-            'period' => [
-                'start' => $startDate,
-                'end' => $endDate,
-            ],
-            'income' => [
-                'sales' => $salesIncome,
-                'manual' => $manualIncome,
-                'total' => $salesIncome + $manualIncome,
-            ],
-            'expenses' => [
-                'paid' => $expenses,
-                'pending' => $pendingExpenses,
-            ],
-            'balance' => ($salesIncome + $manualIncome) - $expenses,
-            'overdue_count' => $overdueCount,
-        ];
+        return $query->getSummaryByPeriod($startDate, $endDate);
     }
 }

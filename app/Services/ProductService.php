@@ -94,13 +94,15 @@ class ProductService
 
     public function getProductStats(Product $product): array
     {
-        $product->load(['saleItems.sale.customer', 'saleItems.sale.user']);
+        /** @var object{total_sold: numeric, total_revenue: numeric}|null $stats */
+        $stats = $product->saleItems()
+            ->toBase()
+            ->selectRaw('COALESCE(SUM(quantity), 0) as total_sold, COALESCE(SUM(subtotal), 0) as total_revenue')
+            ->first();
 
         return [
-            'totalSold' => $product->saleItems->sum('quantity'),
-            'totalRevenue' => $product->saleItems->sum(function ($item) {
-                return $item->quantity * $item->unit_price;
-            }),
+            'totalSold' => (int) ($stats->total_sold ?? 0),
+            'totalRevenue' => (float) ($stats->total_revenue ?? 0.0),
         ];
     }
 
