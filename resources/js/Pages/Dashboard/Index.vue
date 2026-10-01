@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import StatCard from '@/Components/UI/StatCard.vue';
 import Badge from '@/Components/UI/Badge.vue';
+import AppButton from '@/Components/UI/AppButton.vue';
 import type { Sale, PaymentMethod } from '@/types';
 
 interface FinancialSummary {
@@ -32,7 +33,7 @@ interface RecentTransaction {
     status: string;
 }
 
-defineProps<{
+const props = defineProps<{
     salesStats: SalesStats;
     latestSales: Sale[];
     paymentMethods: PaymentMethod[];
@@ -49,139 +50,231 @@ function formatDate(dateStr: string): string {
     if (!dateStr) return '-';
     return new Date(dateStr).toLocaleDateString('pt-BR');
 }
+
+// Calculate percentages for visual ratio bar
+const totalVolume = props.financialSummary.income.total + props.financialSummary.expenses.paid;
+const incomePercentage = totalVolume > 0 ? Math.round((props.financialSummary.income.total / totalVolume) * 100) : 50;
+const expensePercentage = 100 - incomePercentage;
 </script>
 
 <template>
     <AppLayout title="Dashboard">
-        <Head title="Dashboard Executivo" />
+        <Head title="Painel Geral" />
 
-        <!-- Header -->
+        <!-- Page Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-slate-900">Dashboard</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Visão geral do desempenho de vendas, estoque e fluxo financeiro.</p>
+                <p class="text-xs text-slate-500 mt-1">Métricas em tempo real de vendas, fluxo de caixa e estoques.</p>
             </div>
             <div class="flex items-center gap-2.5">
-                <Link
-                    href="/sales/create"
-                    class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors"
-                >
-                    + Nova Venda
+                <Link href="/sales/create">
+                    <AppButton variant="primary" size="md">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Nova Venda
+                    </AppButton>
                 </Link>
             </div>
         </div>
 
-        <!-- Metric Cards Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <!-- 4 Primary KPI Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <StatCard
                 title="Vendas Hoje"
                 :value="salesStats.today"
-                subtitle="Pedidos emitidos hoje"
-            />
+                subtitle="Pedidos processados"
+            >
+                <template #icon>
+                    <div class="h-8 w-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                    </div>
+                </template>
+            </StatCard>
+
             <StatCard
-                title="Faturamento (Mês)"
+                title="Faturamento do Mês"
                 :value="formatMoney(salesStats.month)"
-                :subtitle="`Ticket médio: ${formatMoney(salesStats.averageThisMonth)}`"
-            />
+                :subtitle="`Ticket Médio: ${formatMoney(salesStats.averageThisMonth)}`"
+            >
+                <template #icon>
+                    <div class="h-8 w-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                </template>
+            </StatCard>
+
             <StatCard
-                title="Balanço Líquido (Mês)"
+                title="Resultado Líquido"
                 :value="formatMoney(financialSummary.balance)"
                 :subtitle="`Receitas: ${formatMoney(financialSummary.income.total)}`"
-            />
+            >
+                <template #icon>
+                    <div class="h-8 w-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
+                </template>
+            </StatCard>
+
             <StatCard
                 title="Contas Vencidas"
                 :value="financialSummary.overdue_count"
-                :subtitle="financialSummary.overdue_count > 0 ? 'Requer atenção imediata' : 'Nenhuma conta em atraso'"
-            />
+                :subtitle="financialSummary.overdue_count > 0 ? 'Lançamentos pendentes' : 'Nenhuma conta em atraso'"
+            >
+                <template #icon>
+                    <div
+                        class="h-8 w-8 rounded-lg flex items-center justify-center"
+                        :class="financialSummary.overdue_count > 0 ? 'bg-rose-50 text-rose-600' : 'bg-slate-50 text-slate-400'"
+                    >
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                </template>
+            </StatCard>
         </div>
 
-        <!-- Financial Summary Banner -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-            <div class="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-5">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-semibold text-emerald-900">Receitas do Mês</span>
-                    <Badge variant="success">{{ formatMoney(financialSummary.income.total) }}</Badge>
+        <!-- Cashflow Health Bar & Breakdown -->
+        <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-900 tracking-tight">Composição do Fluxo Financeiro</h2>
+                    <p class="text-xs text-slate-500">Proporção entre receitas arrecadadas e despesas quitadas no período.</p>
                 </div>
-                <div class="mt-3 flex items-center justify-between text-xs text-emerald-700">
-                    <span>Vendas Faturadas: {{ formatMoney(financialSummary.income.sales) }}</span>
-                    <span>Receitas Manuais: {{ formatMoney(financialSummary.income.manual) }}</span>
+                <div class="flex items-center gap-4 text-xs font-semibold">
+                    <span class="inline-flex items-center gap-1.5 text-emerald-700">
+                        <span class="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                        Receitas ({{ incomePercentage }}%)
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 text-rose-700">
+                        <span class="h-2.5 w-2.5 rounded-full bg-rose-500" />
+                        Despesas ({{ expensePercentage }}%)
+                    </span>
                 </div>
             </div>
 
-            <div class="rounded-2xl border border-rose-100 bg-rose-50/50 p-5">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-semibold text-rose-900">Despesas do Mês</span>
-                    <Badge variant="danger">{{ formatMoney(financialSummary.expenses.paid) }}</Badge>
+            <!-- Proportional Ratio Bar -->
+            <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden flex gap-1 p-0.5">
+                <div
+                    class="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                    :style="{ width: `${incomePercentage}%` }"
+                />
+                <div
+                    class="h-full bg-rose-500 rounded-full transition-all duration-500"
+                    :style="{ width: `${expensePercentage}%` }"
+                />
+            </div>
+
+            <!-- Detailed Values Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-5 pt-4 border-t border-slate-100 text-xs">
+                <div>
+                    <span class="text-slate-400 block font-medium">Vendas no Mês</span>
+                    <span class="text-slate-900 font-bold tabular-nums text-sm">{{ formatMoney(financialSummary.income.sales) }}</span>
                 </div>
-                <div class="mt-3 flex items-center justify-between text-xs text-rose-700">
-                    <span>Pagas: {{ formatMoney(financialSummary.expenses.paid) }}</span>
-                    <span>Pendentes a Pagar: {{ formatMoney(financialSummary.expenses.pending) }}</span>
+                <div>
+                    <span class="text-slate-400 block font-medium">Receitas Manuais</span>
+                    <span class="text-slate-900 font-bold tabular-nums text-sm">{{ formatMoney(financialSummary.income.manual) }}</span>
+                </div>
+                <div>
+                    <span class="text-slate-400 block font-medium">Despesas Pagas</span>
+                    <span class="text-slate-900 font-bold tabular-nums text-sm">{{ formatMoney(financialSummary.expenses.paid) }}</span>
+                </div>
+                <div>
+                    <span class="text-slate-400 block font-medium">Despesas a Vencer</span>
+                    <span class="text-slate-900 font-bold tabular-nums text-sm">{{ formatMoney(financialSummary.expenses.pending) }}</span>
                 </div>
             </div>
         </div>
 
-        <!-- Tables Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Latest Sales -->
-            <div class="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-6 shadow-xs">
+        <!-- 2 Column Section: Latest Sales & Recent Movements -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Latest Sales Table -->
+            <div class="lg:col-span-2 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs">
                 <div class="flex items-center justify-between mb-5">
-                    <h2 class="text-base font-bold text-slate-900">Últimas Vendas</h2>
-                    <Link href="/sales" class="text-xs font-semibold text-blue-600 hover:text-blue-700">Ver todas</Link>
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-900 tracking-tight">Últimos Pedidos Emitidos</h2>
+                        <p class="text-xs text-slate-500">Transações recentes registradas no sistema.</p>
+                    </div>
+                    <Link
+                        href="/sales"
+                        class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                        Ver todas &rarr;
+                    </Link>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-slate-600">
-                        <thead class="text-xs uppercase bg-slate-50 text-slate-500 border-b border-slate-100">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="uppercase bg-slate-50/80 text-slate-500 font-semibold border-b border-slate-100">
                             <tr>
-                                <th class="py-3 px-3">#ID</th>
-                                <th class="py-3 px-3">Cliente</th>
-                                <th class="py-3 px-3">Forma Pagto</th>
-                                <th class="py-3 px-3 text-right">Total</th>
-                                <th class="py-3 px-3 text-center">Status</th>
+                                <th class="py-2.5 px-3">#ID</th>
+                                <th class="py-2.5 px-3">Cliente</th>
+                                <th class="py-2.5 px-3">Forma Pagto</th>
+                                <th class="py-2.5 px-3 text-right">Total</th>
+                                <th class="py-2.5 px-3 text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            <tr v-for="sale in latestSales" :key="sale.id" class="hover:bg-slate-50/80 transition-colors">
-                                <td class="py-3.5 px-3 font-semibold text-slate-900">#{{ sale.id }}</td>
-                                <td class="py-3.5 px-3 truncate max-w-[150px]">{{ sale.customer?.name || 'Cliente Avulso' }}</td>
-                                <td class="py-3.5 px-3">{{ sale.payment_method?.name || '-' }}</td>
-                                <td class="py-3.5 px-3 text-right font-semibold text-slate-900">{{ formatMoney(sale.total_amount) }}</td>
-                                <td class="py-3.5 px-3 text-center">
-                                    <Badge :variant="sale.status === 'completed' ? 'success' : 'danger'">
+                            <tr
+                                v-for="sale in latestSales"
+                                :key="sale.id"
+                                class="hover:bg-slate-50/70 transition-colors"
+                            >
+                                <td class="py-3 px-3 font-bold text-slate-900 tabular-nums">#{{ sale.id }}</td>
+                                <td class="py-3 px-3 font-medium text-slate-800 truncate max-w-[160px]">
+                                    {{ sale.customer?.name || 'Cliente Avulso' }}
+                                </td>
+                                <td class="py-3 px-3 text-slate-500">{{ sale.payment_method?.name || '-' }}</td>
+                                <td class="py-3 px-3 text-right font-bold text-slate-900 tabular-nums">
+                                    {{ formatMoney(sale.total_amount) }}
+                                </td>
+                                <td class="py-3 px-3 text-center">
+                                    <Badge :variant="sale.status === 'completed' ? 'success' : 'danger'" size="sm">
                                         {{ sale.status === 'completed' ? 'Concluída' : 'Cancelada' }}
                                     </Badge>
                                 </td>
                             </tr>
                             <tr v-if="!latestSales.length">
-                                <td colspan="5" class="py-8 text-center text-slate-400 text-sm">Nenhuma venda registrada ainda.</td>
+                                <td colspan="5" class="py-8 text-center text-slate-400">Nenhuma venda registrada ainda.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Recent Transactions Stream -->
-            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs">
-                <h2 class="text-base font-bold text-slate-900 mb-5">Movimentações Recentes</h2>
-                <div class="space-y-4">
+            <!-- Recent Stream -->
+            <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs">
+                <div class="mb-5">
+                    <h2 class="text-sm font-bold text-slate-900 tracking-tight">Atividade Recente</h2>
+                    <p class="text-xs text-slate-500">Últimas entradas e saídas de caixa.</p>
+                </div>
+
+                <div class="space-y-3">
                     <div
                         v-for="(tx, idx) in recentTransactions"
                         :key="idx"
-                        class="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50/60"
+                        class="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-100/70 transition-colors"
                     >
                         <div class="truncate mr-3">
-                            <p class="text-xs font-semibold text-slate-900 truncate">{{ tx.description }}</p>
-                            <p class="text-[11px] text-slate-400">{{ formatDate(tx.date) }}</p>
+                            <p class="text-xs font-semibold text-slate-900 truncate leading-tight">{{ tx.description }}</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5 tabular-nums">{{ formatDate(tx.date) }}</p>
                         </div>
                         <span
-                            class="text-xs font-bold shrink-0"
+                            class="text-xs font-bold tabular-nums shrink-0"
                             :class="tx.type === 'income' ? 'text-emerald-600' : 'text-rose-600'"
                         >
                             {{ tx.type === 'income' ? '+' : '-' }} {{ formatMoney(tx.amount) }}
                         </span>
                     </div>
-                    <div v-if="!recentTransactions.length" class="py-6 text-center text-slate-400 text-xs">
-                        Nenhuma movimentação no período.
+                    <div v-if="!recentTransactions.length" class="py-8 text-center text-slate-400 text-xs">
+                        Nenhuma movimentação recente.
                     </div>
                 </div>
             </div>

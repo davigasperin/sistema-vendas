@@ -13,11 +13,36 @@ const page = usePage<PageProps>();
 const mobileMenuOpen = ref(false);
 
 const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: 'LayoutDashboard', current: page.url === '/dashboard' || page.url === '/' },
-    { name: 'Vendas', href: '/sales', icon: 'ShoppingCart', current: page.url.startsWith('/sales') },
-    { name: 'Produtos', href: '/products', icon: 'Package', current: page.url.startsWith('/products') },
-    { name: 'Clientes', href: '/customers', icon: 'Users', current: page.url.startsWith('/customers') },
-    { name: 'Despesas', href: '/expenses', icon: 'Receipt', current: page.url.startsWith('/expenses') },
+    {
+        name: 'Dashboard',
+        href: '/dashboard',
+        current: page.url === '/dashboard' || page.url === '/',
+        icon: 'dashboard',
+    },
+    {
+        name: 'Vendas',
+        href: '/sales',
+        current: page.url.startsWith('/sales'),
+        icon: 'sales',
+    },
+    {
+        name: 'Produtos',
+        href: '/products',
+        current: page.url.startsWith('/products'),
+        icon: 'products',
+    },
+    {
+        name: 'Clientes',
+        href: '/customers',
+        current: page.url.startsWith('/customers'),
+        icon: 'customers',
+    },
+    {
+        name: 'Despesas',
+        href: '/expenses',
+        current: page.url.startsWith('/expenses'),
+        icon: 'expenses',
+    },
 ];
 
 function logout() {
@@ -26,83 +51,121 @@ function logout() {
 </script>
 
 <template>
-    <div class="min-h-screen bg-slate-50 flex flex-col md:flex-row">
+    <div class="min-h-screen bg-slate-50 flex flex-col md:flex-row text-slate-900">
         <Toast />
 
         <!-- Sidebar for Desktop -->
-        <aside class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 bg-slate-900 border-r border-slate-800 z-30">
-            <div class="flex h-16 shrink-0 items-center px-6 gap-3 border-b border-slate-800">
-                <div class="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
+        <aside class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 bg-slate-900 border-r border-slate-800/80 z-30 select-none">
+            <!-- Brand -->
+            <div class="flex h-16 shrink-0 items-center px-5 gap-3 border-b border-slate-800/80">
+                <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold text-sm shadow-sm ring-1 ring-white/10">
                     SV
                 </div>
-                <span class="text-base font-bold tracking-tight text-white">Sistema de Vendas</span>
+                <div class="flex flex-col">
+                    <span class="text-sm font-bold tracking-tight text-white leading-tight">Sistema de Vendas</span>
+                    <span class="text-[11px] font-medium text-slate-400">ERP & Gestão Comercial</span>
+                </div>
             </div>
 
-            <div class="flex flex-1 flex-col overflow-y-auto px-4 py-6 justify-between">
-                <nav class="space-y-1.5">
+            <!-- Navigation Links -->
+            <div class="flex flex-1 flex-col overflow-y-auto px-3.5 py-5 justify-between">
+                <nav class="space-y-1">
                     <Link
                         v-for="item in navigation"
                         :key="item.name"
                         :href="item.href"
-                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
+                        class="group flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-150 relative"
                         :class="[
                             item.current
-                                ? 'bg-blue-600 text-white shadow-sm font-semibold'
+                                ? 'bg-blue-600/90 text-white shadow-xs'
                                 : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200',
                         ]"
                     >
+                        <!-- Left indicator -->
+                        <span
+                            v-if="item.current"
+                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded-r-full"
+                        />
+
+                        <!-- SVG Icons per route -->
+                        <svg v-if="item.icon === 'dashboard'" class="h-4 w-4 shrink-0 transition-colors" :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+
+                        <svg v-else-if="item.icon === 'sales'" class="h-4 w-4 shrink-0 transition-colors" :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+
+                        <svg v-else-if="item.icon === 'products'" class="h-4 w-4 shrink-0 transition-colors" :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+
+                        <svg v-else-if="item.icon === 'customers'" class="h-4 w-4 shrink-0 transition-colors" :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+
+                        <svg v-else-if="item.icon === 'expenses'" class="h-4 w-4 shrink-0 transition-colors" :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
+                        </svg>
+
                         <span>{{ item.name }}</span>
                     </Link>
                 </nav>
 
-                <div class="pt-4 border-t border-slate-800">
-                    <div class="px-3 py-2">
+                <!-- User Profile & Action -->
+                <div class="pt-4 border-t border-slate-800/80">
+                    <div class="px-3 py-2.5 rounded-xl bg-slate-800/40 border border-slate-800">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-medium text-slate-400">Usuário</span>
-                            <Badge variant="info" size="sm">{{ page.props.auth.user?.role_label }}</Badge>
+                            <span class="text-[11px] font-medium text-slate-400">Perfil Ativo</span>
+                            <Badge variant="info" size="sm">{{ page.props.auth.user?.role_label || 'Vendedor' }}</Badge>
                         </div>
-                        <p class="text-sm font-semibold text-white mt-1 truncate">{{ page.props.auth.user?.name }}</p>
-                        <p class="text-xs text-slate-400 truncate">{{ page.props.auth.user?.email }}</p>
+                        <p class="text-xs font-semibold text-white mt-1.5 truncate">{{ page.props.auth.user?.name }}</p>
+                        <p class="text-[11px] text-slate-400 truncate">{{ page.props.auth.user?.email }}</p>
                     </div>
+
                     <button
                         type="button"
                         @click="logout"
-                        class="mt-2 w-full flex items-center justify-center gap-2 rounded-lg bg-slate-800/80 px-3 py-2 text-xs font-medium text-slate-300 hover:bg-rose-900/40 hover:text-rose-300 transition-colors"
+                        class="mt-2.5 w-full flex items-center justify-center gap-2 rounded-xl bg-slate-800/70 hover:bg-rose-950/40 text-slate-300 hover:text-rose-300 px-3 py-2 text-xs font-medium border border-transparent hover:border-rose-900/50 transition-all cursor-pointer"
                     >
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
                         Encerrar Sessão
                     </button>
                 </div>
             </div>
         </aside>
 
-        <!-- Main Content Container -->
-        <div class="flex flex-1 flex-col md:pl-64">
-            <!-- Mobile Topbar -->
-            <header class="md:hidden flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-xs sticky top-0 z-20">
-                <div class="flex items-center gap-2">
-                    <div class="h-7 w-7 rounded-md bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
+        <!-- Main Content Area -->
+        <div class="flex flex-1 flex-col md:pl-64 min-w-0">
+            <!-- Mobile Header -->
+            <header class="md:hidden flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-2xs sticky top-0 z-20">
+                <div class="flex items-center gap-2.5">
+                    <div class="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
                         SV
                     </div>
-                    <span class="text-sm font-bold text-slate-900">Sistema de Vendas</span>
+                    <span class="text-sm font-bold tracking-tight text-slate-900">Sistema de Vendas</span>
                 </div>
                 <button
                     type="button"
                     @click="mobileMenuOpen = !mobileMenuOpen"
                     class="p-2 rounded-lg text-slate-600 hover:bg-slate-100"
+                    aria-label="Menu"
                 >
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
             </header>
 
             <!-- Mobile Drawer -->
-            <div v-if="mobileMenuOpen" class="md:hidden bg-slate-900 px-4 py-4 space-y-2 border-b border-slate-800">
+            <div v-if="mobileMenuOpen" class="md:hidden bg-slate-900 px-4 py-4 space-y-1.5 border-b border-slate-800">
                 <Link
                     v-for="item in navigation"
                     :key="item.name"
                     :href="item.href"
-                    class="block px-3 py-2 rounded-lg text-sm font-medium"
+                    class="block px-3 py-2 rounded-lg text-xs font-semibold"
                     :class="[
                         item.current ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800',
                     ]"
@@ -110,13 +173,13 @@ function logout() {
                 >
                     {{ item.name }}
                 </Link>
-                <div class="pt-3 border-t border-slate-800 flex justify-between items-center">
-                    <span class="text-xs text-slate-400">{{ page.props.auth.user?.name }}</span>
-                    <button @click="logout" class="text-xs text-rose-400 font-medium">Sair</button>
+                <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+                    <span class="text-slate-400">{{ page.props.auth.user?.name }}</span>
+                    <button @click="logout" class="text-rose-400 font-semibold cursor-pointer">Sair</button>
                 </div>
             </div>
 
-            <!-- Page Body -->
+            <!-- Page Content -->
             <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
                 <slot />
             </main>
