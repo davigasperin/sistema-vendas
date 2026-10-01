@@ -22,7 +22,7 @@ const emit = defineEmits<{
         >
             <div v-if="show" class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
                 <div
-                    class="w-full rounded-2xl bg-white p-6 shadow-xl transition-all"
+                    class="w-full rounded-xl bg-white p-6 shadow-xl transition-all"
                     :class="[
                         maxWidth === 'sm' ? 'max-w-sm' : '',
                         maxWidth === 'md' ? 'max-w-md' : '',

@@ -6,37 +6,40 @@ defineProps<{
     links: PaginationLink[];
 }>();
 
-function formatPaginationLabel(label: string): string {
+function cleanLabel(label: string): string {
     return label
-        .replace('&laquo;', '«')
-        .replace('&raquo;', '»')
+        .replace('&laquo;', '')
+        .replace('&raquo;', '')
         .replace('Previous', 'Anterior')
-        .replace('Next', 'Próximo');
+        .replace('Next', 'Próximo')
+        .trim();
 }
 </script>
 
 <template>
-    <div v-if="links && links.length > 3" class="flex flex-wrap items-center justify-center gap-1 py-3 select-none">
-        <template v-for="(link, key) in links" :key="key">
-            <div
-                v-if="link.url === null"
-                class="px-3 py-1.5 text-xs text-slate-400 border border-slate-200 rounded-lg cursor-not-allowed opacity-60"
-            >
-                {{ formatPaginationLabel(link.label) }}
-            </div>
-            <Link
-                v-else
-                :href="link.url"
-                class="px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer"
-                :class="[
-                    link.active
-                        ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50',
-                ]"
-                preserve-scroll
-            >
-                {{ formatPaginationLabel(link.label) }}
-            </Link>
-        </template>
+    <div v-if="links && links.length > 3" class="flex items-center justify-between py-3 text-xs text-slate-500">
+        <div class="flex items-center gap-1">
+            <template v-for="(link, key) in links" :key="key">
+                <span
+                    v-if="link.url === null"
+                    class="px-2.5 py-1 text-slate-300 select-none"
+                >
+                    {{ cleanLabel(link.label) }}
+                </span>
+                <Link
+                    v-else
+                    :href="link.url"
+                    class="px-2.5 py-1 rounded-md transition-colors"
+                    :class="[
+                        link.active
+                            ? 'bg-slate-900 text-white font-semibold'
+                            : 'hover:bg-slate-100 text-slate-700',
+                    ]"
+                    preserve-scroll
+                >
+                    {{ cleanLabel(link.label) }}
+                </Link>
+            </template>
+        </div>
     </div>
 </template>

@@ -31,7 +31,7 @@ const inputId = computed(() => props.id || `input-${Math.random().toString(36).s
         <label
             v-if="label"
             :for="inputId"
-            class="block text-xs font-semibold text-slate-700 tracking-wide mb-1.5"
+            class="block text-xs font-medium text-slate-700 mb-1.5"
         >
             {{ label }}
             <span v-if="required" class="text-rose-500">*</span>
@@ -45,7 +45,7 @@ const inputId = computed(() => props.id || `input-${Math.random().toString(36).s
                 :required="required"
                 :disabled="disabled"
                 @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-                class="w-full rounded-xl border bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 transition-all duration-150 focus:outline-hidden focus:ring-2 focus:ring-offset-0 disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed"
+                class="w-full rounded-lg border bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 transition-colors duration-150 focus:outline-hidden focus:ring-2 focus:ring-offset-0 disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed"
                 :class="[
                     error
                         ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500/20'

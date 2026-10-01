@@ -51,19 +51,19 @@ function logout() {
 </script>
 
 <template>
-    <div class="min-h-screen bg-slate-50/60 flex flex-col md:flex-row text-slate-900 antialiased font-sans selection:bg-blue-500 selection:text-white">
+    <div class="min-h-screen bg-slate-50/60 flex flex-col md:flex-row text-slate-900 antialiased font-sans selection:bg-slate-900 selection:text-white">
         <Toast />
 
         <!-- Sidebar for Desktop -->
         <aside class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 bg-slate-950 border-r border-slate-800/60 z-30 select-none">
             <!-- Brand -->
             <div class="flex h-16 shrink-0 items-center px-5 gap-3 border-b border-slate-800/60">
-                <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-extrabold text-sm shadow-md shadow-blue-500/20 ring-1 ring-white/10">
+                <div class="h-9 w-9 rounded-lg bg-slate-800 flex items-center justify-center text-white font-bold text-sm">
                     SV
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-sm font-bold tracking-tight text-white leading-tight">Sistema de Vendas</span>
-                    <span class="text-[11px] font-medium text-slate-400">ERP & Gestão Comercial</span>
+                    <span class="text-sm font-semibold tracking-tight text-white leading-tight">Sistema de Vendas</span>
+                    <span class="text-[11px] text-slate-400">ERP & Gestão Comercial</span>
                 </div>
             </div>
 
@@ -74,18 +74,13 @@ function logout() {
                         v-for="item in navigation"
                         :key="item.name"
                         :href="item.href"
-                        class="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-150 relative"
+                        class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors duration-150"
                         :class="[
                             item.current
-                                ? 'bg-blue-600 text-white shadow-xs font-bold'
+                                ? 'bg-slate-800 text-white'
                                 : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200',
                         ]"
                     >
-                        <span
-                            v-if="item.current"
-                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded-r-full"
-                        />
-
                         <!-- Icons -->
                         <svg v-if="item.icon === 'dashboard'" class="h-4 w-4 shrink-0 transition-colors" :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -113,19 +108,19 @@ function logout() {
 
                 <!-- User Profile & Action -->
                 <div class="pt-4 border-t border-slate-800/60">
-                    <div class="px-3 py-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                    <div class="px-3 py-2.5 rounded-lg">
                         <div class="flex items-center justify-between">
-                            <span class="text-[11px] font-semibold text-slate-400">Perfil Ativo</span>
-                            <Badge variant="info" size="sm">{{ page.props.auth.user?.role_label || 'Vendedor' }}</Badge>
+                            <span class="text-[11px] text-slate-500">Perfil Ativo</span>
+                            <Badge variant="neutral" size="sm">{{ page.props.auth.user?.role_label || 'Vendedor' }}</Badge>
                         </div>
-                        <p class="text-xs font-bold text-white mt-1.5 truncate">{{ page.props.auth.user?.name }}</p>
+                        <p class="text-xs font-semibold text-white mt-1.5 truncate">{{ page.props.auth.user?.name }}</p>
                         <p class="text-[11px] text-slate-400 truncate">{{ page.props.auth.user?.email }}</p>
                     </div>
 
                     <button
                         type="button"
                         @click="logout"
-                        class="mt-2.5 w-full flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-rose-950/40 text-slate-400 hover:text-rose-300 px-3 py-2 text-xs font-semibold border border-slate-800/60 hover:border-rose-900/50 transition-all cursor-pointer"
+                        class="mt-2.5 w-full flex items-center justify-center gap-2 rounded-lg text-slate-400 hover:text-slate-200 px-3 py-2 text-xs font-medium transition-colors cursor-pointer"
                     >
                         <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -140,15 +135,15 @@ function logout() {
         <div class="flex flex-1 flex-col md:pl-64 min-w-0">
             <!-- Topbar with Breadcrumbs and Quick Status -->
             <header class="hidden md:flex h-16 items-center justify-between border-b border-slate-200/80 bg-white/90 backdrop-blur-md px-8 sticky top-0 z-20">
-                <div class="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                <div class="flex items-center gap-2 text-xs text-slate-500">
                     <span class="text-slate-400">Sistema</span>
                     <span>/</span>
-                    <span class="text-slate-900 font-bold capitalize">{{ page.url.split('/')[1] || 'Dashboard' }}</span>
+                    <span class="text-slate-900 font-medium capitalize">{{ page.url.split('/')[1] || 'Dashboard' }}</span>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-100 text-[11px] font-semibold text-emerald-700">
-                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <div class="flex items-center gap-2 text-[11px] text-slate-400">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                         Operação Online
                     </div>
                 </div>
@@ -157,10 +152,10 @@ function logout() {
             <!-- Mobile Header -->
             <header class="md:hidden flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-2xs sticky top-0 z-20">
                 <div class="flex items-center gap-2.5">
-                    <div class="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-xs">
+                    <div class="h-8 w-8 rounded-lg bg-slate-900 flex items-center justify-center text-white font-bold text-sm">
                         SV
                     </div>
-                    <span class="text-sm font-bold tracking-tight text-slate-900">Sistema de Vendas</span>
+                    <span class="text-sm font-semibold tracking-tight text-slate-900">Sistema de Vendas</span>
                 </div>
                 <button
                     type="button"
@@ -180,9 +175,9 @@ function logout() {
                     v-for="item in navigation"
                     :key="item.name"
                     :href="item.href"
-                    class="block px-3 py-2 rounded-lg text-xs font-semibold"
+                    class="block px-3 py-2 rounded-lg text-xs font-medium"
                     :class="[
-                        item.current ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-900',
+                        item.current ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-900',
                     ]"
                     @click="mobileMenuOpen = false"
                 >

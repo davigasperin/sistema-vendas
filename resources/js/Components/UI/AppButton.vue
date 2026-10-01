@@ -20,13 +20,13 @@ const props = withDefaults(defineProps<Props>(), {
 const variantClasses = computed(() => {
     switch (props.variant) {
         case 'primary':
-            return 'bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-950 focus-visible:ring-slate-900 shadow-xs';
+            return 'bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-950 focus-visible:ring-slate-900';
         case 'secondary':
-            return 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:text-slate-900 active:bg-slate-100 focus-visible:ring-slate-400 shadow-2xs';
+            return 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:text-slate-900 active:bg-slate-100 focus-visible:ring-slate-400';
         case 'danger':
-            return 'bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800 focus-visible:ring-rose-600 shadow-xs';
+            return 'bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800 focus-visible:ring-rose-600';
         case 'success':
-            return 'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 focus-visible:ring-emerald-600 shadow-xs';
+            return 'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 focus-visible:ring-emerald-600';
         case 'ghost':
             return 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 focus-visible:ring-slate-400';
     }
@@ -37,9 +37,9 @@ const sizeClasses = computed(() => {
         case 'sm':
             return 'px-2.5 py-1.5 text-xs rounded-lg gap-1.5';
         case 'md':
-            return 'px-4 py-2 text-sm rounded-xl gap-2 font-medium';
+            return 'px-4 py-2 text-sm rounded-lg gap-2 font-medium';
         case 'lg':
-            return 'px-5 py-2.5 text-base rounded-xl gap-2.5 font-semibold';
+            return 'px-5 py-2.5 text-base rounded-lg gap-2.5 font-semibold';
     }
 });
 </script>
@@ -48,7 +48,7 @@ const sizeClasses = computed(() => {
     <button
         :type="type"
         :disabled="disabled || loading"
-        class="inline-flex items-center justify-center font-medium transition-all duration-150 cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none"
+        class="inline-flex items-center justify-center font-medium transition-colors duration-150 cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none"
         :class="[variantClasses, sizeClasses]"
     >
         <svg

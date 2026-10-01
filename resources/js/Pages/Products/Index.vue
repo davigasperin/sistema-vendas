@@ -64,7 +64,7 @@ function formatMoney(value: number): string {
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-slate-900">Produtos</h1>
+                <h1 class="text-2xl font-semibold text-slate-900">Produtos</h1>
                 <p class="text-xs text-slate-500 mt-1">Gerenciamento de estoque, precificação e disponibilidade para vendas.</p>
             </div>
             <Link href="/products/create">
@@ -79,10 +79,10 @@ function formatMoney(value: number): string {
 
         <!-- Quick Counters -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div class="p-4 rounded-2xl border border-slate-200/80 bg-white shadow-2xs flex items-center justify-between">
+            <div class="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
                 <div>
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Catálogo Total</span>
-                    <span class="text-xl font-bold text-slate-900 tabular-nums">{{ totalProducts }} itens</span>
+                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Catálogo Total</span>
+                    <span class="text-xl font-semibold text-slate-900 tabular-nums">{{ totalProducts }} itens</span>
                 </div>
                 <div class="h-9 w-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -91,26 +91,26 @@ function formatMoney(value: number): string {
                 </div>
             </div>
 
-            <div class="p-4 rounded-2xl border border-slate-200/80 bg-white shadow-2xs flex items-center justify-between">
+            <div class="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
                 <div>
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Disponíveis para Venda</span>
-                    <span class="text-xl font-bold text-emerald-600 tabular-nums">{{ activeProducts }} ativos</span>
+                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Disponíveis para Venda</span>
+                    <span class="text-xl font-semibold text-slate-900 tabular-nums">{{ activeProducts }} ativos</span>
                 </div>
-                <div class="h-9 w-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                <div class="h-9 w-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
             </div>
 
-            <div class="p-4 rounded-2xl border border-slate-200/80 bg-white shadow-2xs flex items-center justify-between">
+            <div class="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
                 <div>
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Estoque Crítico</span>
-                    <span class="text-xl font-bold tabular-nums" :class="lowStock > 0 ? 'text-rose-600' : 'text-slate-900'">
+                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider block">Estoque Crítico</span>
+                    <span class="text-xl font-semibold tabular-nums" :class="lowStock > 0 ? 'text-rose-600' : 'text-slate-900'">
                         {{ lowStock }} itens
                     </span>
                 </div>
-                <div class="h-9 w-9 rounded-xl flex items-center justify-center" :class="lowStock > 0 ? 'bg-rose-50 text-rose-600' : 'bg-slate-100 text-slate-400'">
+                <div class="h-9 w-9 rounded-lg flex items-center justify-center" :class="lowStock > 0 ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-400'">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
@@ -119,14 +119,14 @@ function formatMoney(value: number): string {
         </div>
 
         <!-- Filter Bar -->
-        <div class="rounded-2xl border border-slate-200/80 bg-white p-4 mb-6 shadow-2xs flex flex-col sm:flex-row gap-3 items-center justify-between">
+        <div class="rounded-xl border border-slate-200 bg-white p-4 mb-6 flex flex-col sm:flex-row gap-3 items-center justify-between">
             <div class="w-full sm:max-w-md relative">
                 <input
                     v-model="search"
                     @keyup.enter="handleSearch"
                     type="text"
                     placeholder="Buscar produto por nome..."
-                    class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all"
+                    class="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-colors"
                 />
             </div>
             <AppButton variant="secondary" size="sm" @click="handleSearch">
@@ -135,7 +135,7 @@ function formatMoney(value: number): string {
         </div>
 
         <!-- Data Table -->
-        <div class="rounded-2xl border border-slate-200/80 bg-white shadow-2xs overflow-hidden">
+        <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs text-slate-600">
                     <thead class="uppercase bg-slate-50/80 text-slate-500 font-semibold border-b border-slate-200/80">
@@ -154,21 +154,21 @@ function formatMoney(value: number): string {
                             class="hover:bg-slate-50/60 transition-colors"
                         >
                             <td class="py-3 px-4">
-                                <div class="font-bold text-slate-900 text-xs">{{ product.name }}</div>
+                                <div class="font-semibold text-slate-900 text-xs">{{ product.name }}</div>
                                 <div class="text-[11px] text-slate-400 line-clamp-1 mt-0.5">{{ product.description || 'Sem descrição cadastrada.' }}</div>
                             </td>
-                            <td class="py-3 px-4 font-bold text-slate-900 tabular-nums">
+                            <td class="py-3 px-4 font-semibold text-slate-900 tabular-nums">
                                 {{ formatMoney(product.price) }}
                             </td>
                             <td class="py-3 px-4 text-center">
                                 <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold tabular-nums"
+                                    class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold tabular-nums"
                                     :class="[
                                         product.stock <= 0
-                                            ? 'bg-rose-100 text-rose-800'
+                                            ? 'text-rose-600'
                                             : product.stock <= product.low_stock_threshold
-                                            ? 'bg-amber-100 text-amber-800'
-                                            : 'bg-emerald-50 text-emerald-700',
+                                            ? 'text-amber-600'
+                                            : 'text-slate-500',
                                     ]"
                                 >
                                     {{ product.stock }} unidades
@@ -190,7 +190,7 @@ function formatMoney(value: number): string {
                                 <button
                                     type="button"
                                     @click="openAdjustModal(product)"
-                                    class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+                                    class="text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
                                 >
                                     Ajustar Estoque
                                 </button>
@@ -235,17 +235,17 @@ function formatMoney(value: number): string {
             @close="adjustingProduct = null"
         >
             <div class="space-y-4 text-xs">
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex justify-between items-center">
+                <div class="p-3 rounded-lg bg-slate-50 border border-slate-100 flex justify-between items-center">
                     <span class="text-slate-500 font-medium">Saldo Atual em Prateleira:</span>
-                    <span class="font-bold text-slate-900 tabular-nums text-sm">{{ adjustingProduct?.stock }} unidades</span>
+                    <span class="font-semibold text-slate-900 tabular-nums text-sm">{{ adjustingProduct?.stock }} unidades</span>
                 </div>
 
                 <div>
-                    <label class="block text-slate-700 font-semibold mb-1">Quantidade a Ajustar</label>
+                    <label class="block text-slate-700 font-medium mb-1">Quantidade a Ajustar</label>
                     <input
                         v-model.number="adjustmentAmount"
                         type="number"
-                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold tabular-nums text-slate-900 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
+                        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold tabular-nums text-slate-900 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
                         placeholder="Ex: 5 (entrada) ou -2 (baixa)"
                     />
                     <span class="text-[11px] text-slate-400 mt-1 block">

@@ -49,11 +49,11 @@ function showToast() {
     >
         <div
             v-if="visible && message"
-            class="fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-xl p-4 shadow-lg border text-sm font-medium"
+            class="fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-4 text-sm font-medium shadow-lg"
             :class="[
-                type === 'success' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : '',
-                type === 'error' ? 'bg-rose-50 text-rose-800 border-rose-200' : '',
-                type === 'info' ? 'bg-blue-50 text-blue-800 border-blue-200' : '',
+                type === 'success' ? 'text-emerald-700' : '',
+                type === 'error' ? 'text-rose-700' : '',
+                type === 'info' ? 'text-slate-700' : '',
             ]"
         >
             <span>{{ message }}</span>
