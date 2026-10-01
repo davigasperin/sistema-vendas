@@ -1,15 +1,20 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import AppButton from '@/Components/UI/AppButton.vue';
+import TextInput from '@/Components/UI/TextInput.vue';
+import SelectInput from '@/Components/UI/SelectInput.vue';
+import MoneyInput from '@/Components/UI/MoneyInput.vue';
 import type { ExpenseCategory } from '@/types';
 
-defineProps<{
+const props = defineProps<{
     categories: ExpenseCategory[];
 }>();
 
 const form = useForm({
     description: '',
-    amount: '',
+    amount: 0,
     due_date: new Date().toISOString().split('T')[0],
     category_id: '' as number | '',
     type: 'expense',
@@ -17,120 +22,117 @@ const form = useForm({
     notes: '',
 });
 
+const categoryOptions = computed(() => {
+    return props.categories.map((c) => ({
+        value: c.id,
+        label: c.name,
+    }));
+});
+
+const typeOptions = [
+    { value: 'expense', label: 'Despesa (Saída de Caixa)' },
+    { value: 'income', label: 'Receita (Entrada Manual)' },
+];
+
 function submit() {
     form.post('/expenses');
 }
 </script>
 
 <template>
-    <AppLayout title="Nova Despesa">
-        <Head title="Cadastrar Despesa / Receita" />
+    <AppLayout title="Novo Lançamento">
+        <Head title="Novo Lançamento Financeiro" />
 
         <div class="max-w-3xl mx-auto">
-            <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-200/80">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">Nova Despesa / Receita</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Registre contas a pagar ou entradas financeiras manuais.</p>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900">Novo Lançamento</h1>
+                    <p class="text-xs text-slate-500 mt-0.5">Registre contas a pagar ou entradas financeiras avulsas.</p>
                 </div>
                 <Link
                     href="/expenses"
-                    class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+                    class="text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
                 >
                     &larr; Voltar
                 </Link>
             </div>
 
-            <form @submit.prevent="submit" class="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+            <form @submit.prevent="submit" class="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-2xs space-y-5">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Descrição do Lançamento *</label>
-                    <input
+                    <TextInput
                         v-model="form.description"
-                        type="text"
+                        label="Descrição do Lançamento"
+                        placeholder="Ex: Aluguel do Escritório, Energia Elétrica, Taxa de Hospedagem..."
                         required
-                        class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
-                        placeholder="Ex: Aluguel do Escritório, Conta de Energia..."
+                        :error="form.errors.description"
                     />
-                    <p v-if="form.errors.description" class="mt-1 text-xs text-rose-600">{{ form.errors.description }}</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Tipo de Lançamento *</label>
-                        <select
+                        <SelectInput
                             v-model="form.type"
+                            :options="typeOptions"
+                            label="Tipo de Lançamento"
                             required
-                            class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
-                        >
-                            <option value="expense">Despesa (Saída)</option>
-                            <option value="income">Receita (Entrada Manual)</option>
-                        </select>
+                        />
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Categoria *</label>
-                        <select
+                        <SelectInput
                             v-model="form.category_id"
+                            :options="categoryOptions"
+                            label="Categoria"
+                            placeholder="Selecione uma categoria..."
                             required
-                            class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
-                        >
-                            <option value="">Selecione uma categoria...</option>
-                            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-                        </select>
-                        <p v-if="form.errors.category_id" class="mt-1 text-xs text-rose-600">{{ form.errors.category_id }}</p>
+                            :error="form.errors.category_id"
+                        />
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Valor (R$) *</label>
-                        <input
+                        <MoneyInput
                             v-model="form.amount"
-                            type="number"
-                            step="0.01"
-                            min="0.01"
+                            label="Valor do Lançamento"
                             required
-                            class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="0,00"
+                            :error="form.errors.amount"
                         />
-                        <p v-if="form.errors.amount" class="mt-1 text-xs text-rose-600">{{ form.errors.amount }}</p>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Data de Vencimento *</label>
-                        <input
+                        <TextInput
                             v-model="form.due_date"
                             type="date"
+                            label="Data de Vencimento"
                             required
-                            class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
+                            :error="form.errors.due_date"
                         />
-                        <p v-if="form.errors.due_date" class="mt-1 text-xs text-rose-600">{{ form.errors.due_date }}</p>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Observações</label>
+                    <label class="block text-xs font-semibold text-slate-700 tracking-wide mb-1.5">Observações Internas</label>
                     <textarea
                         v-model="form.notes"
                         rows="2"
-                        class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
-                        placeholder="Detalhes adicionais, forma de quitação, número da nota fiscal..."
+                        class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all"
+                        placeholder="Informações adicionais de conciliação..."
                     />
                 </div>
 
-                <div class="flex justify-end gap-3 pt-6 border-t border-slate-100">
-                    <Link
-                        href="/expenses"
-                        class="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
-                    >
-                        Cancelar
+                <div class="flex justify-end gap-2.5 pt-6 border-t border-slate-100">
+                    <Link href="/expenses">
+                        <AppButton variant="secondary" size="md">Cancelar</AppButton>
                     </Link>
-                    <button
+                    <AppButton
                         type="submit"
-                        :disabled="form.processing"
-                        class="px-5 py-2.5 rounded-xl bg-blue-600 text-xs font-semibold text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
+                        variant="primary"
+                        size="md"
+                        :loading="form.processing"
                     >
-                        {{ form.processing ? 'Salvando...' : 'Salvar Lançamento' }}
-                    </button>
+                        Salvar Lançamento
+                    </AppButton>
                 </div>
             </form>
         </div>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import AppButton from '@/Components/UI/AppButton.vue';
+import TextInput from '@/Components/UI/TextInput.vue';
 
 const form = useForm({
     name: '',
@@ -20,91 +22,82 @@ function submit() {
         <Head title="Cadastrar Cliente" />
 
         <div class="max-w-3xl mx-auto">
-            <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-200/80">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">Novo Cliente</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Cadastre um cliente para emissão de pedidos e relatórios.</p>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900">Novo Cliente</h1>
+                    <p class="text-xs text-slate-500 mt-0.5">Cadastre o cliente para emissão de pedidos e relatórios.</p>
                 </div>
                 <Link
                     href="/customers"
-                    class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+                    class="text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
                 >
                     &larr; Voltar
                 </Link>
             </div>
 
-            <form @submit.prevent="submit" class="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+            <form @submit.prevent="submit" class="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-2xs space-y-5">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Nome Completo *</label>
-                    <input
+                    <TextInput
                         v-model="form.name"
-                        type="text"
+                        label="Nome Completo / Razão Social"
+                        placeholder="Ex: Carlos Eduardo Silva"
                         required
-                        class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
-                        placeholder="Ex: João da Silva"
+                        :error="form.errors.name"
                     />
-                    <p v-if="form.errors.name" class="mt-1 text-xs text-rose-600">{{ form.errors.name }}</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">E-mail</label>
-                        <input
+                        <TextInput
                             v-model="form.email"
                             type="email"
-                            class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="joao@email.com"
+                            label="E-mail"
+                            placeholder="carlos@empresa.com"
+                            :error="form.errors.email"
                         />
-                        <p v-if="form.errors.email" class="mt-1 text-xs text-rose-600">{{ form.errors.email }}</p>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Telefone / WhatsApp</label>
-                        <input
+                        <TextInput
                             v-model="form.phone"
                             type="text"
-                            class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
+                            label="Telefone / WhatsApp"
                             placeholder="(11) 98888-7777"
+                            :error="form.errors.phone"
                         />
-                        <p v-if="form.errors.phone" class="mt-1 text-xs text-rose-600">{{ form.errors.phone }}</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Endereço Residencial/Comercial</label>
-                        <input
+                        <TextInput
                             v-model="form.address"
-                            type="text"
-                            class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
+                            label="Endereço Completo"
                             placeholder="Rua, Número, Bairro, Cidade"
                         />
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Data de Nascimento</label>
-                        <input
+                        <TextInput
                             v-model="form.birth_date"
                             type="date"
-                            class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
+                            label="Data de Nascimento"
                         />
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-6 border-t border-slate-100">
-                    <Link
-                        href="/customers"
-                        class="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
-                    >
-                        Cancelar
+                <div class="flex justify-end gap-2.5 pt-6 border-t border-slate-100">
+                    <Link href="/customers">
+                        <AppButton variant="secondary" size="md">Cancelar</AppButton>
                     </Link>
-                    <button
+                    <AppButton
                         type="submit"
-                        :disabled="form.processing"
-                        class="px-5 py-2.5 rounded-xl bg-blue-600 text-xs font-semibold text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
+                        variant="primary"
+                        size="md"
+                        :loading="form.processing"
                     >
-                        {{ form.processing ? 'Salvando...' : 'Cadastrar Cliente' }}
-                    </button>
+                        Cadastrar Cliente
+                    </AppButton>
                 </div>
             </form>
         </div>

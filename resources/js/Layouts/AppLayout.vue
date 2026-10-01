@@ -51,14 +51,14 @@ function logout() {
 </script>
 
 <template>
-    <div class="min-h-screen bg-slate-50 flex flex-col md:flex-row text-slate-900">
+    <div class="min-h-screen bg-slate-50/60 flex flex-col md:flex-row text-slate-900 antialiased font-sans selection:bg-blue-500 selection:text-white">
         <Toast />
 
         <!-- Sidebar for Desktop -->
-        <aside class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 bg-slate-900 border-r border-slate-800/80 z-30 select-none">
+        <aside class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 bg-slate-950 border-r border-slate-800/60 z-30 select-none">
             <!-- Brand -->
-            <div class="flex h-16 shrink-0 items-center px-5 gap-3 border-b border-slate-800/80">
-                <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold text-sm shadow-sm ring-1 ring-white/10">
+            <div class="flex h-16 shrink-0 items-center px-5 gap-3 border-b border-slate-800/60">
+                <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-extrabold text-sm shadow-md shadow-blue-500/20 ring-1 ring-white/10">
                     SV
                 </div>
                 <div class="flex flex-col">
@@ -68,26 +68,25 @@ function logout() {
             </div>
 
             <!-- Navigation Links -->
-            <div class="flex flex-1 flex-col overflow-y-auto px-3.5 py-5 justify-between">
+            <div class="flex flex-1 flex-col overflow-y-auto px-3 py-4 justify-between">
                 <nav class="space-y-1">
                     <Link
                         v-for="item in navigation"
                         :key="item.name"
                         :href="item.href"
-                        class="group flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-150 relative"
+                        class="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-150 relative"
                         :class="[
                             item.current
-                                ? 'bg-blue-600/90 text-white shadow-xs'
-                                : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200',
+                                ? 'bg-blue-600 text-white shadow-xs font-bold'
+                                : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200',
                         ]"
                     >
-                        <!-- Left indicator -->
                         <span
                             v-if="item.current"
                             class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded-r-full"
                         />
 
-                        <!-- SVG Icons per route -->
+                        <!-- Icons -->
                         <svg v-if="item.icon === 'dashboard'" class="h-4 w-4 shrink-0 transition-colors" :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
@@ -101,7 +100,7 @@ function logout() {
                         </svg>
 
                         <svg v-else-if="item.icon === 'customers'" class="h-4 w-4 shrink-0 transition-colors" :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
 
                         <svg v-else-if="item.icon === 'expenses'" class="h-4 w-4 shrink-0 transition-colors" :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -113,20 +112,20 @@ function logout() {
                 </nav>
 
                 <!-- User Profile & Action -->
-                <div class="pt-4 border-t border-slate-800/80">
-                    <div class="px-3 py-2.5 rounded-xl bg-slate-800/40 border border-slate-800">
+                <div class="pt-4 border-t border-slate-800/60">
+                    <div class="px-3 py-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80">
                         <div class="flex items-center justify-between">
-                            <span class="text-[11px] font-medium text-slate-400">Perfil Ativo</span>
+                            <span class="text-[11px] font-semibold text-slate-400">Perfil Ativo</span>
                             <Badge variant="info" size="sm">{{ page.props.auth.user?.role_label || 'Vendedor' }}</Badge>
                         </div>
-                        <p class="text-xs font-semibold text-white mt-1.5 truncate">{{ page.props.auth.user?.name }}</p>
+                        <p class="text-xs font-bold text-white mt-1.5 truncate">{{ page.props.auth.user?.name }}</p>
                         <p class="text-[11px] text-slate-400 truncate">{{ page.props.auth.user?.email }}</p>
                     </div>
 
                     <button
                         type="button"
                         @click="logout"
-                        class="mt-2.5 w-full flex items-center justify-center gap-2 rounded-xl bg-slate-800/70 hover:bg-rose-950/40 text-slate-300 hover:text-rose-300 px-3 py-2 text-xs font-medium border border-transparent hover:border-rose-900/50 transition-all cursor-pointer"
+                        class="mt-2.5 w-full flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-rose-950/40 text-slate-400 hover:text-rose-300 px-3 py-2 text-xs font-semibold border border-slate-800/60 hover:border-rose-900/50 transition-all cursor-pointer"
                     >
                         <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -139,10 +138,26 @@ function logout() {
 
         <!-- Main Content Area -->
         <div class="flex flex-1 flex-col md:pl-64 min-w-0">
+            <!-- Topbar with Breadcrumbs and Quick Status -->
+            <header class="hidden md:flex h-16 items-center justify-between border-b border-slate-200/80 bg-white/90 backdrop-blur-md px-8 sticky top-0 z-20">
+                <div class="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                    <span class="text-slate-400">Sistema</span>
+                    <span>/</span>
+                    <span class="text-slate-900 font-bold capitalize">{{ page.url.split('/')[1] || 'Dashboard' }}</span>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-100 text-[11px] font-semibold text-emerald-700">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Operação Online
+                    </div>
+                </div>
+            </header>
+
             <!-- Mobile Header -->
             <header class="md:hidden flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-2xs sticky top-0 z-20">
                 <div class="flex items-center gap-2.5">
-                    <div class="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
+                    <div class="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-xs">
                         SV
                     </div>
                     <span class="text-sm font-bold tracking-tight text-slate-900">Sistema de Vendas</span>
@@ -160,14 +175,14 @@ function logout() {
             </header>
 
             <!-- Mobile Drawer -->
-            <div v-if="mobileMenuOpen" class="md:hidden bg-slate-900 px-4 py-4 space-y-1.5 border-b border-slate-800">
+            <div v-if="mobileMenuOpen" class="md:hidden bg-slate-950 px-4 py-4 space-y-1.5 border-b border-slate-800">
                 <Link
                     v-for="item in navigation"
                     :key="item.name"
                     :href="item.href"
                     class="block px-3 py-2 rounded-lg text-xs font-semibold"
                     :class="[
-                        item.current ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800',
+                        item.current ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-900',
                     ]"
                     @click="mobileMenuOpen = false"
                 >

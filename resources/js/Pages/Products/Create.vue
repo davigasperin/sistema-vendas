@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import AppButton from '@/Components/UI/AppButton.vue';
+import TextInput from '@/Components/UI/TextInput.vue';
+import MoneyInput from '@/Components/UI/MoneyInput.vue';
 
 const form = useForm({
     name: '',
     description: '',
-    price: '',
+    price: 0,
     stock: 0,
     low_stock_threshold: 5,
     active: true,
@@ -21,77 +24,66 @@ function submit() {
         <Head title="Cadastrar Produto" />
 
         <div class="max-w-3xl mx-auto">
-            <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-200/80">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">Novo Produto</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Cadastre um novo item para venda e controle de estoque.</p>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900">Novo Produto</h1>
+                    <p class="text-xs text-slate-500 mt-0.5">Cadastre um item no catálogo com estoque e precificação oficial.</p>
                 </div>
                 <Link
                     href="/products"
-                    class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+                    class="text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
                 >
                     &larr; Voltar
                 </Link>
             </div>
 
-            <form @submit.prevent="submit" class="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
+            <form @submit.prevent="submit" class="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-2xs space-y-5">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Nome do Produto *</label>
-                    <input
+                    <TextInput
                         v-model="form.name"
-                        type="text"
+                        label="Nome do Produto"
+                        placeholder="Ex: Teclado Mecânico Switch Blue"
                         required
-                        class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
-                        placeholder="Ex: Mouse Sem Fio Ergonômico"
+                        :error="form.errors.name"
                     />
-                    <p v-if="form.errors.name" class="mt-1 text-xs text-rose-600">{{ form.errors.name }}</p>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Descrição</label>
+                    <label class="block text-xs font-semibold text-slate-700 tracking-wide mb-1.5">Descrição Comercial</label>
                     <textarea
                         v-model="form.description"
                         rows="3"
-                        class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
-                        placeholder="Detalhes, especificações técnicas..."
+                        class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all"
+                        placeholder="Especificações técnicas, dimensões, garantia..."
                     />
                     <p v-if="form.errors.description" class="mt-1 text-xs text-rose-600">{{ form.errors.description }}</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Preço Unitário (R$) *</label>
-                        <input
+                        <MoneyInput
                             v-model="form.price"
-                            type="number"
-                            step="0.01"
-                            min="0"
+                            label="Preço de Venda"
                             required
-                            class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="0,00"
+                            :error="form.errors.price"
                         />
-                        <p v-if="form.errors.price" class="mt-1 text-xs text-rose-600">{{ form.errors.price }}</p>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Estoque Inicial *</label>
-                        <input
+                        <TextInput
                             v-model.number="form.stock"
                             type="number"
-                            min="0"
+                            label="Estoque Inicial"
                             required
-                            class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
+                            :error="form.errors.stock"
                         />
-                        <p v-if="form.errors.stock" class="mt-1 text-xs text-rose-600">{{ form.errors.stock }}</p>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">Alerta Estoque Baixo</label>
-                        <input
+                        <TextInput
                             v-model.number="form.low_stock_threshold"
                             type="number"
-                            min="0"
-                            class="w-full rounded-xl border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
+                            label="Alerta de Estoque Baixo"
                         />
                     </div>
                 </div>
@@ -101,25 +93,23 @@ function submit() {
                         id="active"
                         v-model="form.active"
                         type="checkbox"
-                        class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        class="h-4 w-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
-                    <label for="active" class="text-xs font-medium text-slate-700">Produto ativo para vendas imediatamente</label>
+                    <label for="active" class="text-xs font-medium text-slate-700 cursor-pointer">Disponibilizar item para vendas imediatamente</label>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-6 border-t border-slate-100">
-                    <Link
-                        href="/products"
-                        class="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
-                    >
-                        Cancelar
+                <div class="flex justify-end gap-2.5 pt-6 border-t border-slate-100">
+                    <Link href="/products">
+                        <AppButton variant="secondary" size="md">Cancelar</AppButton>
                     </Link>
-                    <button
+                    <AppButton
                         type="submit"
-                        :disabled="form.processing"
-                        class="px-5 py-2.5 rounded-xl bg-blue-600 text-xs font-semibold text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
+                        variant="primary"
+                        size="md"
+                        :loading="form.processing"
                     >
-                        {{ form.processing ? 'Cadastrando...' : 'Cadastrar Produto' }}
-                    </button>
+                        Cadastrar Produto
+                    </AppButton>
                 </div>
             </form>
         </div>

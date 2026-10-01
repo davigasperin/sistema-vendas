@@ -4,6 +4,7 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Badge from '@/Components/UI/Badge.vue';
 import Pagination from '@/Components/UI/Pagination.vue';
+import AppButton from '@/Components/UI/AppButton.vue';
 import type { Sale, Customer, PaymentMethod, PaginatedData } from '@/types';
 
 const props = defineProps<{
@@ -64,11 +65,13 @@ function formatDate(dateStr: string): string {
                 <h1 class="text-2xl font-bold tracking-tight text-slate-900">Vendas</h1>
                 <p class="text-sm text-slate-500 mt-0.5">Histórico completo de pedidos, faturamento e emissão de notas/PDF.</p>
             </div>
-            <Link
-                href="/sales/create"
-                class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors"
-            >
-                + Nova Venda
+            <Link href="/sales/create">
+                <AppButton variant="primary" size="md">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Nova Venda
+                </AppButton>
             </Link>
         </div>
 
@@ -117,20 +120,12 @@ function formatDate(dateStr: string): string {
             </div>
 
             <div class="flex justify-end gap-2 mt-4 pt-3 border-t border-slate-100">
-                <button
-                    type="button"
-                    @click="resetFilters"
-                    class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800"
-                >
+                <AppButton variant="secondary" size="sm" @click="resetFilters">
                     Limpar
-                </button>
-                <button
-                    type="button"
-                    @click="applyFilters"
-                    class="px-4 py-2 rounded-xl bg-slate-900 text-xs font-semibold text-white hover:bg-slate-800 transition-colors"
-                >
+                </AppButton>
+                <AppButton variant="primary" size="sm" @click="applyFilters">
                     Filtrar Resultados
-                </button>
+                </AppButton>
             </div>
         </div>
 
