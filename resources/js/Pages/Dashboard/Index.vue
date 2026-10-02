@@ -259,7 +259,7 @@ const expensePercentage = 100 - incomePercentage;
                 <div class="space-y-3">
                     <div
                         v-for="(tx, idx) in recentTransactions"
-                        :key="idx"
+                        :key="`${tx.type}-${tx.date}-${tx.amount}-${idx}`"
                         class="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50/50 hover:bg-slate-100/70 transition-colors"
                     >
                         <div class="truncate mr-3">

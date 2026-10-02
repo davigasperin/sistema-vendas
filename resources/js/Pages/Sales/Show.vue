@@ -1,12 +1,17 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Badge from '@/Components/UI/Badge.vue';
+import ConfirmDialog from '@/Components/UI/ConfirmDialog.vue';
 import type { Sale } from '@/types';
 
 const props = defineProps<{
     sale: Sale;
 }>();
+
+const showCancelDialog = ref(false);
+const isCancelling = ref(false);
 
 function formatMoney(value: number): string {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -17,12 +22,14 @@ function formatDate(dateStr?: string | null): string {
     return new Date(dateStr).toLocaleDateString('pt-BR');
 }
 
-function cancelSale() {
-    if (!confirm('Deseja realmente cancelar esta venda? O estoque dos itens será estornado automaticamente.')) {
-        return;
-    }
-
-    router.delete(`/sales/${props.sale.id}`);
+function handleCancelSale() {
+    isCancelling.value = true;
+    router.delete(`/sales/${props.sale.id}`, {
+        onFinish: () => {
+            isCancelling.value = false;
+            showCancelDialog.value = false;
+        },
+    });
 }
 </script>
 
@@ -50,7 +57,7 @@ function cancelSale() {
                     <button
                         v-if="sale.status === 'completed'"
                         type="button"
-                        @click="cancelSale"
+                        @click="showCancelDialog = true"
                         class="px-4 py-2 rounded-lg bg-rose-50 text-xs font-semibold text-rose-700 hover:bg-rose-100 transition-colors"
                     >
                         Cancelar Venda
@@ -133,5 +140,17 @@ function cancelSale() {
                 </div>
             </div>
         </div>
+
+        <ConfirmDialog
+            :show="showCancelDialog"
+            title="Cancelar Venda"
+            message="Deseja realmente cancelar esta venda? O estoque dos itens será estornado automaticamente."
+            confirm-label="Cancelar Venda"
+            cancel-label="Voltar"
+            variant="danger"
+            :loading="isCancelling"
+            @confirm="handleCancelSale"
+            @cancel="showCancelDialog = false"
+        />
     </AppLayout>
 </template>

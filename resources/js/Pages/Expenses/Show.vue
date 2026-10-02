@@ -1,12 +1,17 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Badge from '@/Components/UI/Badge.vue';
+import ConfirmDialog from '@/Components/UI/ConfirmDialog.vue';
 import type { Expense } from '@/types';
 
 const props = defineProps<{
     expense: Expense;
 }>();
+
+const showDeleteDialog = ref(false);
+const isDeleting = ref(false);
 
 function formatMoney(value: number): string {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -21,9 +26,14 @@ function markPaid() {
     router.patch(`/expenses/${props.expense.id}/mark-paid`, {}, { preserveScroll: true });
 }
 
-function deleteExpense() {
-    if (!confirm('Deseja realmente excluir este lançamento?')) return;
-    router.delete(`/expenses/${props.expense.id}`);
+function handleDeleteExpense() {
+    isDeleting.value = true;
+    router.delete(`/expenses/${props.expense.id}`, {
+        onFinish: () => {
+            isDeleting.value = false;
+            showDeleteDialog.value = false;
+        },
+    });
 }
 </script>
 
@@ -53,6 +63,13 @@ function deleteExpense() {
                         class="px-4 py-2 rounded-lg bg-emerald-600 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors"
                     >
                         Marcar como Pago
+                    </button>
+                    <button
+                        type="button"
+                        @click="showDeleteDialog = true"
+                        class="px-4 py-2 rounded-lg bg-rose-50 text-xs font-semibold text-rose-700 hover:bg-rose-100 transition-colors"
+                    >
+                        Excluir
                     </button>
                     <Link
                         href="/expenses"
@@ -98,5 +115,17 @@ function deleteExpense() {
                 </div>
             </div>
         </div>
+
+        <ConfirmDialog
+            :show="showDeleteDialog"
+            title="Excluir Lançamento"
+            message="Deseja realmente excluir este lançamento? Esta ação não pode ser desfeita."
+            confirm-label="Excluir"
+            cancel-label="Cancelar"
+            variant="danger"
+            :loading="isDeleting"
+            @confirm="handleDeleteExpense"
+            @cancel="showDeleteDialog = false"
+        />
     </AppLayout>
 </template>
