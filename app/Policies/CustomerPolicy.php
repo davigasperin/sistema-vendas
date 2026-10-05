@@ -29,10 +29,10 @@ class CustomerPolicy
 
     public function delete(User $user, Customer $customer): bool
     {
-        if (!$user->isAdmin()) {
+        if (! $user->isAdmin()) {
             return false;
         }
 
-        return !$customer->sales()->exists();
+        return ! $customer->sales()->exists();
     }
 }

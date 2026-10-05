@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Product;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class ProductService
 {
@@ -12,8 +13,8 @@ class ProductService
     {
         $query = Product::query();
 
-        if (!empty($filters['search'])) {
-            $query->where('name', 'like', '%' . $filters['search'] . '%');
+        if (! empty($filters['search'])) {
+            $query->where('name', 'like', '%'.$filters['search'].'%');
         }
 
         if (isset($filters['active'])) {
@@ -31,11 +32,11 @@ class ProductService
     {
         $query = Product::query();
 
-        if (!empty($search)) {
-            $query->where('name', 'like', '%' . $search . '%');
+        if (! empty($search)) {
+            $query->where('name', 'like', '%'.$search.'%');
         }
 
-        if (!is_null($active)) {
+        if (! is_null($active)) {
             if ($active === '1') {
                 $query->where('active', true);
             } elseif ($active === '0') {
@@ -68,6 +69,7 @@ class ProductService
     public function updateProduct(Product $product, array $data): Product
     {
         $product->update($data);
+
         return $product;
     }
 
@@ -78,26 +80,40 @@ class ProductService
 
     public function adjustStock(Product $product, int $adjustment): int
     {
+        $previousStock = (int) $product->stock;
         $newStock = max(0, $product->stock + $adjustment);
         $product->update(['stock' => $newStock]);
+
+        Log::info('Ajuste manual de estoque', [
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'adjustment' => $adjustment,
+            'previous_stock' => $previousStock,
+            'new_stock' => $newStock,
+            'user_id' => auth()->id(),
+        ]);
+
         return $newStock;
     }
 
     public function toggleActive(Product $product): bool
     {
-        $product->update(['active' => !$product->active]);
+        $product->update(['active' => ! $product->active]);
+
         return $product->active;
     }
 
     public function getProductStats(Product $product): array
     {
-        $product->load(['saleItems.sale.customer', 'saleItems.sale.user']);
-        
+        /** @var object{total_sold: numeric, total_revenue: numeric}|null $stats */
+        $stats = $product->saleItems()
+            ->toBase()
+            ->selectRaw('COALESCE(SUM(quantity), 0) as total_sold, COALESCE(SUM(subtotal), 0) as total_revenue')
+            ->first();
+
         return [
-            'totalSold' => $product->saleItems->sum('quantity'),
-            'totalRevenue' => $product->saleItems->sum(function ($item) {
-                return $item->quantity * $item->unit_price;
-            }),
+            'totalSold' => (int) ($stats->total_sold ?? 0),
+            'totalRevenue' => (float) ($stats->total_revenue ?? 0.0),
         ];
     }
 

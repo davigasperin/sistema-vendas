@@ -24,7 +24,7 @@ class SalePolicy
 
     public function update(User $user, Sale $sale): bool
     {
-        if (!$user->canManageSales()) {
+        if (! $user->canManageSales()) {
             return false;
         }
 
@@ -32,12 +32,12 @@ class SalePolicy
             ->where('is_paid', true)
             ->exists();
 
-        return !$hasPaidInstallments;
+        return ! $hasPaidInstallments;
     }
 
     public function delete(User $user, Sale $sale): bool
     {
-        if (!$user->isAdmin()) {
+        if (! $user->isAdmin()) {
             return false;
         }
 
@@ -45,7 +45,7 @@ class SalePolicy
             ->where('is_paid', true)
             ->exists();
 
-        return !$hasPaidInstallments;
+        return ! $hasPaidInstallments;
     }
 
     public function restore(User $user, Sale $sale): bool

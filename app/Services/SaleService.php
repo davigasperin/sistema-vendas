@@ -2,30 +2,39 @@
 
 namespace App\Services;
 
+use App\Actions\CancelSaleAction;
 use App\Actions\CreateSaleAction;
 use App\Actions\UpdateSaleAction;
+use App\DTOs\CreateSaleDTO;
+use App\Enums\SaleStatus;
+use App\Enums\StockMovementType;
+use App\Exceptions\InsufficientStockException;
 use App\Models\Customer;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\Sale;
+use App\Models\StockMovement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SaleService
 {
     public function __construct(
         private CreateSaleAction $createSaleAction,
-        private UpdateSaleAction $updateSaleAction
+        private UpdateSaleAction $updateSaleAction,
+        private CancelSaleAction $cancelSaleAction
     ) {}
 
     public function createSale(array $data): Sale
     {
-        $data['user_id'] = auth()->id();
-        return ($this->createSaleAction)($data);
+        $userId = (int) (auth()->id() ?? $data['user_id'] ?? 1);
+        $dto = CreateSaleDTO::fromArray($data, $userId);
+
+        return ($this->createSaleAction)($dto);
     }
 
     public function updateSale(Sale $sale, array $data): Sale
     {
-        $data['user_id'] = auth()->id();
         return ($this->updateSaleAction)($sale, $data);
     }
 
@@ -99,6 +108,42 @@ class SaleService
 
     public function deleteSale(Sale $sale): void
     {
+        ($this->cancelSaleAction)($sale, auth()->id());
         $sale->delete();
+    }
+
+    public function restoreSale(Sale $sale): void
+    {
+        DB::transaction(function () use ($sale) {
+            $lockedSale = Sale::withTrashed()->where('id', $sale->id)->lockForUpdate()->firstOrFail();
+
+            $items = $lockedSale->items()->get();
+            foreach ($items as $item) {
+                $product = Product::where('id', $item->product_id)->lockForUpdate()->firstOrFail();
+                if ($product->stock < $item->quantity) {
+                    throw new InsufficientStockException($product->name, $item->quantity, $product->stock);
+                }
+                $previousStock = (int) $product->stock;
+                $newStock = $previousStock - $item->quantity;
+                $product->stock = $newStock;
+                $product->save();
+
+                StockMovement::create([
+                    'product_id' => $product->id,
+                    'type' => StockMovementType::Sale,
+                    'quantity' => -$item->quantity,
+                    'previous_stock' => $previousStock,
+                    'new_stock' => $newStock,
+                    'reference_type' => Sale::class,
+                    'reference_id' => $lockedSale->id,
+                    'reason' => "Restauração da venda #{$lockedSale->id}",
+                    'user_id' => auth()->id(),
+                ]);
+            }
+
+            $lockedSale->status = SaleStatus::Completed;
+            $lockedSale->save();
+            $lockedSale->restore();
+        });
     }
 }

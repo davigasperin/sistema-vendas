@@ -3,25 +3,45 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SaleRequest;
+use App\Models\Customer;
+use App\Models\Product;
 use App\Models\Sale;
 use App\Services\SaleService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class SaleController extends Controller
 {
-    public function __construct(private SaleService $saleService) {}
-
-    public function index(Request $request)
+    public function __construct(private SaleService $saleService)
     {
-        $data = $this->saleService->getSalesFiltered($request);
-        return view('sales.index', $data);
+        $this->authorizeResource(Sale::class, 'sale');
     }
 
-    public function create()
+    public function index(Request $request): Response
+    {
+        $data = $this->saleService->getSalesFiltered($request);
+
+        return Inertia::render('Sales/Index', $data + [
+            'filters' => $request->only([
+                'customer_id', 'payment_method_id', 'date_from', 'date_to', 'trashed',
+            ]),
+        ]);
+    }
+
+    public function create(): Response
     {
         $data = $this->saleService->getSalesForCreate();
-        return view('sales.create', $data);
+
+        return Inertia::render('Sales/Create', [
+            'customers' => Customer::orderBy('name')->get(['id', 'name']),
+            'products' => Product::where('active', true)
+                ->where('stock', '>', 0)
+                ->orderBy('name')
+                ->get(['id', 'name', 'price', 'stock']),
+            'paymentMethods' => $data['paymentMethods'],
+        ]);
     }
 
     public function store(SaleRequest $request)
@@ -31,16 +51,18 @@ class SaleController extends Controller
         return redirect()->route('sales.index')->with('success', 'Venda registrada com sucesso!');
     }
 
-    public function show(Sale $sale)
+    public function show(Sale $sale): Response
     {
         $sale = $this->saleService->getSaleForShow($sale);
-        return view('sales.show', compact('sale'));
+
+        return Inertia::render('Sales/Show', compact('sale'));
     }
 
-    public function edit(Sale $sale)
+    public function edit(Sale $sale): Response
     {
         $data = $this->saleService->getSalesForEdit($sale);
-        return view('sales.edit', $data);
+
+        return Inertia::render('Sales/Edit', $data);
     }
 
     public function update(SaleRequest $request, Sale $sale)
@@ -53,13 +75,15 @@ class SaleController extends Controller
     public function destroy(Sale $sale)
     {
         $this->saleService->deleteSale($sale);
-        return redirect()->route('sales.index')->with('success', 'Venda excluída com sucesso!');
+
+        return redirect()->route('sales.index')->with('success', 'Venda cancelada e excluída com sucesso!');
     }
 
-    public function restore(int $id)
+    public function restore(Sale $sale)
     {
-        $sale = Sale::onlyTrashed()->findOrFail($id);
-        $sale->restore();
+        $this->authorize('restore', $sale);
+        $this->saleService->restoreSale($sale);
+
         return redirect()->route('sales.index')->with('success', 'Venda restaurada com sucesso!');
     }
 
@@ -67,6 +91,7 @@ class SaleController extends Controller
     {
         $sale = $this->saleService->getSaleForShow($sale);
         $pdf = Pdf::loadView('sales.pdf', compact('sale'));
+
         return $pdf->download("venda_{$sale->id}.pdf");
     }
 }

@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SecurityHeaders;
+use App\Providers\RateLimiterServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -14,17 +18,22 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->api(prepend: [
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            SubstituteBindings::class,
         ]);
 
-        $middleware->web(prepend: [
-            \App\Http\Middleware\SecurityHeaders::class,
-        ]);
+        $middleware->web(
+            prepend: [
+                SecurityHeaders::class,
+            ],
+            append: [
+                HandleInertiaRequests::class,
+            ]
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })
     ->withProviders([
-        App\Providers\RateLimiterServiceProvider::class,
+        RateLimiterServiceProvider::class,
     ])
     ->create();

@@ -1,15 +1,13 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("
+        DB::statement('
             UPDATE sales 
             SET installments = (
                 SELECT COUNT(*) 
@@ -17,10 +15,8 @@ return new class extends Migration
                 WHERE sale_installments.sale_id = sales.id
             )
             WHERE installments IS NULL OR installments = 0
-        ");
+        ');
     }
 
-    public function down(): void
-    {
-    }
+    public function down(): void {}
 };

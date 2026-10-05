@@ -17,7 +17,7 @@ class CustomerRequest extends FormRequest
 
         return [
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:customers,email,' . $customerId,
+            'email' => 'nullable|email|unique:customers,email,'.$customerId,
             'phone' => 'nullable|string|max:20',
             'birth_date' => 'nullable|date|before:today',
             'address' => 'nullable|string',

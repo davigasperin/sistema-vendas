@@ -11,8 +11,8 @@ class CustomerService
     {
         $query = Customer::query();
 
-        if (!empty($filters['search'])) {
-            $query->where('name', 'like', '%' . $filters['search'] . '%');
+        if (! empty($filters['search'])) {
+            $query->where('name', 'like', '%'.$filters['search'].'%');
         }
 
         return $query->orderBy('created_at', 'desc')->get();
@@ -22,7 +22,7 @@ class CustomerService
     {
         $query = Customer::query();
 
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where('name', 'like', "%{$search}%");
         }
 
@@ -57,6 +57,7 @@ class CustomerService
     public function updateCustomer(Customer $customer, array $data): Customer
     {
         $customer->update($data);
+
         return $customer;
     }
 

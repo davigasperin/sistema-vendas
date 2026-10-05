@@ -24,26 +24,26 @@ class ExpensePolicy
 
     public function update(User $user, Expense $expense): bool
     {
-        if (!$user->canManageExpenses()) {
+        if (! $user->canManageExpenses()) {
             return false;
         }
 
-        return $expense->status !== Expense::STATUS_PAID;
+        return ! $expense->isPaid();
     }
 
     public function delete(User $user, Expense $expense): bool
     {
-        if (!$user->isAdmin()) {
+        if (! $user->isAdmin()) {
             return false;
         }
 
-        return $expense->status !== Expense::STATUS_PAID;
+        return ! $expense->isPaid();
     }
 
     public function markPaid(User $user, Expense $expense): bool
     {
-        return $user->canManageExpenses() 
-            && $expense->status === Expense::STATUS_PENDING;
+        return $user->canManageExpenses()
+            && $expense->isPending();
     }
 
     public function report(User $user): bool

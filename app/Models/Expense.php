@@ -2,21 +2,27 @@
 
 namespace App\Models;
 
+use App\Enums\ExpenseStatus;
+use App\Enums\ExpenseType;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Builder;
 
 class Expense extends Model
 {
     use HasFactory;
 
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_PAID = 'paid';
+
     public const STATUS_OVERDUE = 'overdue';
+
     public const STATUS_CANCELLED = 'cancelled';
 
     public const TYPE_EXPENSE = 'expense';
+
     public const TYPE_INCOME = 'income';
 
     protected $fillable = [
@@ -27,17 +33,35 @@ class Expense extends Model
         'category_id',
         'type',
         'status',
-        'notes'
+        'notes',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'due_date' => 'date',
         'paid_date' => 'date',
-        'type' => 'string',
-        'status' => 'string',
+        'type' => ExpenseType::class,
+        'status' => ExpenseStatus::class,
     ];
 
+    public function isPaid(): bool
+    {
+        return $this->status === ExpenseStatus::Paid;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === ExpenseStatus::Pending;
+    }
+
+    public function isOverdue(): bool
+    {
+        return $this->status === ExpenseStatus::Overdue;
+    }
+
+    /**
+     * @return BelongsTo<ExpenseCategory, $this>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(ExpenseCategory::class);

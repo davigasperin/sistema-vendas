@@ -9,6 +9,7 @@
 /.idea
 /.nova
 /.phpunit.cache
+/.playwright-mcp
 /.vscode
 /.zed
 /auth.json
@@ -18,7 +19,9 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/storage/framework/phpstan
 /vendor
 Homestead.json
 Homestead.yaml
 Thumbs.db
+    

@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\SaleStatus;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Builder;
 
 class Sale extends Model
 {
@@ -13,36 +16,52 @@ class Sale extends Model
 
     protected $fillable = [
         'customer_id', 'payment_method_id',
-        'total_amount', 'installments', 'discount', 'notes'
+        'total_amount', 'status', 'installments', 'discount', 'notes',
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'status' => SaleStatus::class,
         'discount' => 'decimal:2',
         'installments' => 'integer',
     ];
 
-    public function user()
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function customer()
+    /**
+     * @return BelongsTo<Customer, $this>
+     */
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
-    public function paymentMethod()
+    /**
+     * @return BelongsTo<PaymentMethod, $this>
+     */
+    public function paymentMethod(): BelongsTo
     {
         return $this->belongsTo(PaymentMethod::class);
     }
 
-    public function items()
+    /**
+     * @return HasMany<SaleItem, $this>
+     */
+    public function items(): HasMany
     {
         return $this->hasMany(SaleItem::class);
     }
 
-    public function saleInstallments()
+    /**
+     * @return HasMany<SaleInstallment, $this>
+     */
+    public function saleInstallments(): HasMany
     {
         return $this->hasMany(SaleInstallment::class);
     }

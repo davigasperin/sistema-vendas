@@ -24,20 +24,20 @@ class ProductPolicy
 
     public function update(User $user, Product $product): bool
     {
-        if (!$user->canManageProducts()) {
+        if (! $user->canManageProducts()) {
             return false;
         }
 
-        return !$product->saleItems()->exists();
+        return ! $product->saleItems()->exists();
     }
 
     public function delete(User $user, Product $product): bool
     {
-        if (!$user->isAdmin()) {
+        if (! $user->isAdmin()) {
             return false;
         }
 
-        return !$product->saleItems()->exists();
+        return ! $product->saleItems()->exists();
     }
 
     public function adjustStock(User $user, Product $product): bool

@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Services\DashboardService;
 use App\Services\ExpenseService;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class DashboardController extends Controller
 {
@@ -13,7 +14,7 @@ class DashboardController extends Controller
         private ExpenseService $expenseService
     ) {}
 
-    public function index(): View
+    public function index(): Response
     {
         $salesStats = $this->dashboardService->getSalesStats();
         $latestSales = $this->dashboardService->getLatestSales(10);
@@ -21,18 +22,18 @@ class DashboardController extends Controller
 
         $startOfMonth = now()->startOfMonth()->toDateString();
         $endOfMonth = now()->endOfMonth()->toDateString();
-        
+
         $financialSummary = $this->expenseService->getSummaryByPeriod($startOfMonth, $endOfMonth);
         $overdueExpenses = $this->expenseService->getOverdueExpenses()->take(5);
         $recentTransactions = $this->expenseService->getRecentTransactions(5);
 
-        return view('dashboard', compact(
-            'salesStats',
-            'latestSales',
-            'paymentMethods',
-            'financialSummary',
-            'overdueExpenses',
-            'recentTransactions'
-        ));
+        return Inertia::render('Dashboard/Index', [
+            'salesStats' => $salesStats,
+            'latestSales' => $latestSales,
+            'paymentMethods' => $paymentMethods,
+            'financialSummary' => $financialSummary,
+            'overdueExpenses' => $overdueExpenses,
+            'recentTransactions' => $recentTransactions,
+        ]);
     }
 }
