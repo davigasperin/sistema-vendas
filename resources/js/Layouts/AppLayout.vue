@@ -57,13 +57,10 @@ function logout() {
         <!-- Sidebar for Desktop -->
         <aside class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 bg-slate-950 border-r border-slate-800/60 z-30 select-none">
             <!-- Brand -->
-            <div class="flex h-16 shrink-0 items-center px-5 gap-3 border-b border-slate-800/60">
-                <div class="h-9 w-9 rounded-lg bg-slate-800 flex items-center justify-center text-white font-semibold text-sm">
-                    SV
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-sm font-semibold text-white leading-tight">Sistema de Vendas</span>
-                    <span class="text-[11px] text-slate-400">ERP & Gestão Comercial</span>
+            <div class="flex h-16 shrink-0 items-center px-5 border-b border-slate-800/60">
+                <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-semibold text-white tracking-tight">Sistema de Vendas</span>
+                    <span class="text-[10px] font-medium text-slate-500 uppercase">ERP</span>
                 </div>
             </div>
 
@@ -151,11 +148,9 @@ function logout() {
 
             <!-- Mobile Header -->
             <header class="md:hidden flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 sticky top-0 z-20">
-                <div class="flex items-center gap-2.5">
-                    <div class="h-8 w-8 rounded-lg bg-slate-900 flex items-center justify-center text-white font-semibold text-sm">
-                        SV
-                    </div>
-                    <span class="text-sm font-semibold text-slate-900">Sistema de Vendas</span>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-sm font-semibold text-slate-900 tracking-tight">Sistema de Vendas</span>
+                    <span class="text-[10px] font-medium text-slate-400 uppercase">ERP</span>
                 </div>
                 <button
                     type="button"

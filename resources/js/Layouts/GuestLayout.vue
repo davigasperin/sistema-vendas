@@ -20,14 +20,9 @@ defineProps<{
 
         <!-- Header / Brand -->
         <div class="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center">
-            <Link href="/" class="inline-flex items-center gap-3 group">
-                <div class="h-11 w-11 rounded-xl bg-white flex items-center justify-center text-slate-900 font-semibold text-base ring-1 ring-white/20 group-hover:scale-105 transition-transform duration-200">
-                    SV
-                </div>
-                <div class="text-left">
-                    <span class="text-lg font-semibold text-white block leading-tight">Sistema de Vendas</span>
-                    <span class="text-xs font-medium text-slate-400">ERP & Gestão de Vendas</span>
-                </div>
+            <Link href="/" class="inline-flex items-center gap-2 group">
+                <span class="text-lg font-semibold text-white tracking-tight">Sistema de Vendas</span>
+                <span class="text-xs font-medium text-slate-500">ERP</span>
             </Link>
         </div>
 
