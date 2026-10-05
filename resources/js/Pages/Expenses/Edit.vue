@@ -1,17 +1,26 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import axios from 'axios';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import AppButton from '@/Components/UI/AppButton.vue';
 import TextInput from '@/Components/UI/TextInput.vue';
 import SelectInput from '@/Components/UI/SelectInput.vue';
 import MoneyInput from '@/Components/UI/MoneyInput.vue';
+import Modal from '@/Components/UI/Modal.vue';
 import type { Expense, ExpenseCategory } from '@/types';
 
 const props = defineProps<{
     expense: Expense;
     categories: ExpenseCategory[];
 }>();
+
+const localCategories = ref<ExpenseCategory[]>([...props.categories]);
+
+const showCategoryModal = ref(false);
+const newCategoryName = ref('');
+const isCreatingCategory = ref(false);
+const categoryError = ref('');
 
 const form = useForm({
     description: props.expense.description,
@@ -25,16 +34,44 @@ const form = useForm({
 });
 
 const categoryOptions = computed(() => {
-    return props.categories.map((c) => ({
-        value: c.id,
-        label: c.name,
-    }));
+    return localCategories.value
+        .filter((c) => !c.type || c.type === form.type)
+        .map((c) => ({
+            value: c.id,
+            label: c.name,
+        }));
 });
 
 const typeOptions = [
     { value: 'expense', label: 'Despesa (Saída de Caixa)' },
     { value: 'income', label: 'Receita (Entrada Manual)' },
 ];
+
+async function handleCreateCategory() {
+    if (!newCategoryName.value.trim()) {
+        categoryError.value = 'Informe o nome da categoria.';
+        return;
+    }
+
+    isCreatingCategory.value = true;
+    categoryError.value = '';
+
+    try {
+        const response = await axios.post<ExpenseCategory>('/expense-categories', {
+            name: newCategoryName.value.trim(),
+            type: form.type,
+        });
+
+        localCategories.value.push(response.data);
+        form.category_id = response.data.id;
+        newCategoryName.value = '';
+        showCategoryModal.value = false;
+    } catch (err: any) {
+        categoryError.value = err.response?.data?.message || 'Erro ao criar categoria.';
+    } finally {
+        isCreatingCategory.value = false;
+    }
+}
 
 function submit() {
     form.put(`/expenses/${props.expense.id}`);
@@ -80,11 +117,24 @@ function submit() {
                     </div>
 
                     <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-xs font-medium text-slate-700">
+                                Categoria <span class="text-rose-500">*</span>
+                            </label>
+                            <button
+                                type="button"
+                                @click="showCategoryModal = true"
+                                class="text-[11px] font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+                            >
+                                + Nova Categoria
+                            </button>
+                        </div>
                         <SelectInput
                             v-model="form.category_id"
                             :options="categoryOptions"
-                            label="Categoria"
+                            placeholder="Selecione uma categoria..."
                             required
+                            :error="form.errors.category_id"
                         />
                     </div>
                 </div>
@@ -141,6 +191,47 @@ function submit() {
                     </AppButton>
                 </div>
             </form>
+
+            <!-- Modal Criar Categoria Inline -->
+            <Modal
+                :show="showCategoryModal"
+                title="Nova Categoria Financeira"
+                max-width="sm"
+                @close="showCategoryModal = false"
+            >
+                <div class="space-y-4">
+                    <div>
+                        <TextInput
+                            v-model="newCategoryName"
+                            label="Nome da Categoria"
+                            placeholder="Ex: Marketing, Logística, Software..."
+                            required
+                            :error="categoryError"
+                        />
+                    </div>
+                    <p class="text-xs text-slate-500">
+                        A categoria será criada automaticamente para o tipo <strong class="text-slate-700">{{ form.type === 'expense' ? 'Despesa' : 'Receita' }}</strong>.
+                    </p>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <AppButton
+                            variant="secondary"
+                            size="sm"
+                            :disabled="isCreatingCategory"
+                            @click="showCategoryModal = false"
+                        >
+                            Cancelar
+                        </AppButton>
+                        <AppButton
+                            variant="primary"
+                            size="sm"
+                            :loading="isCreatingCategory"
+                            @click="handleCreateCategory"
+                        >
+                            Salvar Categoria
+                        </AppButton>
+                    </div>
+                </div>
+            </Modal>
         </div>
     </AppLayout>
 </template>

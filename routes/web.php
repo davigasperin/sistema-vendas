@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -24,6 +25,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('expenses/report', [ExpenseController::class, 'report'])->name('expenses.report')->middleware('can:report,App\Models\Expense');
     Route::patch('expenses/{expense}/mark-paid', [ExpenseController::class, 'markPaid'])->name('expenses.markPaid')->middleware('can:markPaid,expense');
+    Route::post('expense-categories', [ExpenseCategoryController::class, 'store'])->name('expense-categories.store');
     Route::resource('expenses', ExpenseController::class);
 
     Route::get('sales/{sale}/pdf', [SaleController::class, 'downloadPdf'])->name('sales.pdf')->middleware('can:downloadPdf,sale');
