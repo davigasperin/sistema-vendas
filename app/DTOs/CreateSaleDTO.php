@@ -2,6 +2,8 @@
 
 namespace App\DTOs;
 
+use App\Models\User;
+
 readonly class CreateSaleDTO
 {
     /**
@@ -24,6 +26,9 @@ readonly class CreateSaleDTO
         public array $payments = [],
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data, int $userId): self
     {
         $items = array_map(
@@ -37,21 +42,26 @@ readonly class CreateSaleDTO
             'payment_method_id' => (int) $payment['payment_method_id'],
             'amount' => (float) $payment['amount'],
             'change_given' => isset($payment['change_given']) ? (float) $payment['change_given'] : 0.0,
-            'notes' => $payment['notes'] ?? null,
+            'notes' => isset($payment['notes']) ? (string) $payment['notes'] : null,
         ], $data['payments'] ?? []);
 
         $cashShiftId = ! empty($data['cash_shift_id']) ? (int) $data['cash_shift_id'] : null;
-        if (! $cashShiftId && auth()->user()) {
-            $cashShiftId = auth()->user()->currentCashShift()?->id;
+        if (! $cashShiftId) {
+            $user = auth()->user() ?? User::find($userId);
+            $cashShiftId = $user?->currentCashShift()?->id;
         }
+
+        $paymentMethodId = ! empty($payments)
+            ? (int) $payments[0]['payment_method_id']
+            : (int) ($data['payment_method_id'] ?? 1);
 
         return new self(
             userId: $userId,
             customerId: ! empty($data['customer_id']) ? (int) $data['customer_id'] : null,
-            paymentMethodId: (int) $data['payment_method_id'],
+            paymentMethodId: $paymentMethodId,
             discount: isset($data['discount']) ? (float) $data['discount'] : 0.0,
             installments: isset($data['installments']) ? (int) $data['installments'] : 1,
-            notes: $data['notes'] ?? null,
+            notes: isset($data['notes']) ? (string) $data['notes'] : null,
             items: $items,
             installmentAmounts: $installmentAmounts,
             installmentDates: $installmentDates,

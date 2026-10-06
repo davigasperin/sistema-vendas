@@ -47,9 +47,9 @@ class SaleController extends Controller
 
     public function store(SaleRequest $request)
     {
-        $this->saleService->createSale($request->validated());
+        $sale = $this->saleService->createSale($request->validated());
 
-        return redirect()->route('sales.index')->with('success', 'Venda registrada com sucesso!');
+        return redirect()->route('sales.show', $sale->id)->with('success', 'Venda registrada com sucesso!');
     }
 
     public function show(Sale $sale): Response
@@ -57,6 +57,15 @@ class SaleController extends Controller
         $sale = $this->saleService->getSaleForShow($sale);
 
         return Inertia::render('Sales/Show', compact('sale'));
+    }
+
+    public function receipt(Request $request, Sale $sale)
+    {
+        $this->authorize('view', $sale);
+        $sale = $this->saleService->getSaleForShow($sale);
+        $paperWidth = $request->query('width', '80mm') === '58mm' ? '58mm' : '80mm';
+
+        return view('sales.receipt', compact('sale', 'paperWidth'));
     }
 
     public function edit(Sale $sale): Response

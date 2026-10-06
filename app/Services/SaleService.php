@@ -103,7 +103,15 @@ class SaleService
 
     public function getSaleForShow(Sale $sale): Sale
     {
-        return $sale->load(['items.product', 'saleInstallments', 'customer', 'paymentMethod', 'user']);
+        return $sale->load([
+            'items.product',
+            'saleInstallments',
+            'customer',
+            'paymentMethod',
+            'user',
+            'payments.paymentMethod',
+            'cashShift.user:id,name',
+        ]);
     }
 
     public function deleteSale(Sale $sale): void

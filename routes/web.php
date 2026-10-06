@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::post('cashier/close', [CashShiftController::class, 'close'])->name('cashier.close');
     Route::get('cashier/{cashShift}', [CashShiftController::class, 'show'])->name('cashier.show');
 
+    Route::get('sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt')->middleware('can:view,sale');
     Route::get('sales/{sale}/pdf', [SaleController::class, 'downloadPdf'])->name('sales.pdf')->middleware('can:downloadPdf,sale');
     Route::post('sales/{sale}/restore', [SaleController::class, 'restore'])->withTrashed()->name('sales.restore')->middleware('can:restore,sale');
     Route::resource('sales', SaleController::class)->withTrashed(['restore', 'show']);

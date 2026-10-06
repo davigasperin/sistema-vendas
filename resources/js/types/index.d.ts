@@ -56,12 +56,24 @@ export interface SaleInstallment {
     notes?: string | null;
 }
 
+export interface SalePayment {
+    id: number;
+    sale_id: number;
+    payment_method_id: number;
+    payment_method?: PaymentMethod;
+    amount: number;
+    change_given: number;
+    notes?: string | null;
+    created_at?: string;
+}
+
 export interface Sale {
     id: number;
     customer_id?: number | null;
     customer?: Customer | null;
     payment_method_id: number;
     payment_method?: PaymentMethod;
+    cash_shift_id?: number | null;
     user_id: number;
     user?: User;
     status: 'pending' | 'completed' | 'cancelled';
@@ -71,6 +83,7 @@ export interface Sale {
     installments: number;
     notes?: string | null;
     items?: SaleItem[];
+    payments?: SalePayment[];
     sale_installments?: SaleInstallment[];
     created_at: string;
 }

@@ -2,9 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserRole;
+use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Rules\InstallmentsSumRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class SaleRequest extends FormRequest
 {
@@ -46,6 +49,79 @@ class SaleRequest extends FormRequest
         return $rules;
     }
 
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            $user = $this->user();
+
+            if ($user && $user->role === UserRole::Seller && ! $user->currentCashShift()) {
+                $validator->errors()->add(
+                    'cash_shift',
+                    'Vendedores no PDV precisam de um caixa aberto para registrar vendas.'
+                );
+            }
+
+            $items = (array) $this->input('items', []);
+            if (empty($items)) {
+                return;
+            }
+
+            $netTotalCents = $this->calculateItemsTotalCents();
+            $payments = (array) $this->input('payments', []);
+
+            if (! empty($payments)) {
+                $paymentMethodIds = array_filter(array_column($payments, 'payment_method_id'));
+                $paymentMethods = PaymentMethod::whereIn('id', $paymentMethodIds)->get()->keyBy('id');
+
+                $seenMethodIds = [];
+                $paymentsSumCents = 0;
+
+                foreach ($payments as $index => $payment) {
+                    $methodId = (int) ($payment['payment_method_id'] ?? 0);
+                    $amount = (float) ($payment['amount'] ?? 0);
+                    $changeGiven = (float) ($payment['change_given'] ?? 0);
+
+                    $amountCents = (int) round($amount * 100);
+                    $changeCents = (int) round($changeGiven * 100);
+
+                    if ($amountCents <= 0) {
+                        $validator->errors()->add("payments.{$index}.amount", 'O valor aplicado no pagamento deve ser maior que zero.');
+                    }
+
+                    if (in_array($methodId, $seenMethodIds, true)) {
+                        $validator->errors()->add("payments.{$index}.payment_method_id", 'Forma de pagamento duplicada no checkout.');
+                    }
+                    $seenMethodIds[] = $methodId;
+
+                    $method = $paymentMethods->get($methodId);
+                    if ($method && ! $method->active) {
+                        $validator->errors()->add("payments.{$index}.payment_method_id", "A forma de pagamento '{$method->name}' está inativa.");
+                    }
+
+                    $isCash = $method && (
+                        mb_strtolower($method->name) === 'dinheiro' ||
+                        str_contains(mb_strtolower($method->description ?? ''), 'dinheiro')
+                    );
+
+                    if ($changeCents > 0 && ! $isCash) {
+                        $validator->errors()->add("payments.{$index}.change_given", 'Troco só é permitido para pagamentos em Dinheiro.');
+                    }
+
+                    $paymentsSumCents += $amountCents;
+                }
+
+                if ($paymentsSumCents !== $netTotalCents) {
+                    $formattedSum = number_format($paymentsSumCents / 100, 2, ',', '.');
+                    $formattedTotal = number_format($netTotalCents / 100, 2, ',', '.');
+                    $validator->errors()->add(
+                        'payments',
+                        "A soma dos pagamentos (R$ {$formattedSum}) deve ser exatamente igual ao total líquido da venda (R$ {$formattedTotal})."
+                    );
+                }
+            }
+        });
+    }
+
     public function messages(): array
     {
         return [
@@ -58,11 +134,11 @@ class SaleRequest extends FormRequest
         ];
     }
 
-    protected function calculateItemsTotal(): float
+    public function calculateItemsTotalCents(): int
     {
         $items = (array) $this->input('items', []);
         if (empty($items)) {
-            return 0.0;
+            return 0;
         }
 
         $productIds = array_column($items, 'product_id');
@@ -77,8 +153,12 @@ class SaleRequest extends FormRequest
         }
 
         $discountCents = (int) round(((float) $this->input('discount', 0)) * 100);
-        $netCents = max(0, $totalCents - $discountCents);
 
-        return round($netCents / 100, 2);
+        return max(0, $totalCents - $discountCents);
+    }
+
+    protected function calculateItemsTotal(): float
+    {
+        return round($this->calculateItemsTotalCents() / 100, 2);
     }
 }

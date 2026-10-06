@@ -11,6 +11,7 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\SalePayment;
 use App\Models\StockMovement;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -31,15 +32,25 @@ class CreateSaleAction
 
             $products = Product::whereIn('id', array_keys($productQuantities))->lockForUpdate()->get()->keyBy('id');
 
+            $cashShiftId = $dto->cashShiftId;
+            if (! $cashShiftId && $dto->userId) {
+                $user = User::find($dto->userId);
+                $cashShiftId = $user?->currentCashShift()?->id;
+            }
+
+            $mainPaymentMethodId = ! empty($dto->payments)
+                ? (int) $dto->payments[0]['payment_method_id']
+                : $dto->paymentMethodId;
+
             $sale = new Sale;
             $sale->forceFill([
                 'user_id' => $dto->userId,
-                'cash_shift_id' => $dto->cashShiftId,
+                'cash_shift_id' => $cashShiftId,
                 'customer_id' => $dto->customerId,
-                'payment_method_id' => $dto->paymentMethodId,
+                'payment_method_id' => $mainPaymentMethodId,
                 'status' => SaleStatus::Completed,
                 'installments' => $dto->installments,
-                'discount' => $dto->discount,
+                'discount' => 0,
                 'notes' => $dto->notes,
                 'total_amount' => 0,
             ])->save();
@@ -129,14 +140,25 @@ class CreateSaleAction
             }
 
             if (! empty($dto->payments)) {
+                $appliedSumCents = 0;
                 foreach ($dto->payments as $payment) {
+                    $amountCents = (int) round((float) $payment['amount'] * 100);
+                    $changeCents = (int) round((float) ($payment['change_given'] ?? 0) * 100);
+                    $appliedSumCents += $amountCents;
+
                     SalePayment::create([
                         'sale_id' => $sale->id,
                         'payment_method_id' => $payment['payment_method_id'],
-                        'amount' => $payment['amount'],
-                        'change_given' => $payment['change_given'] ?? 0.0,
+                        'amount' => round($amountCents / 100, 2),
+                        'change_given' => round($changeCents / 100, 2),
                         'notes' => $payment['notes'] ?? null,
                     ]);
+                }
+
+                if ($appliedSumCents !== $totalCents) {
+                    throw new \InvalidArgumentException(
+                        "A soma dos pagamentos ({$appliedSumCents} centavos) não confere com o total líquido da venda ({$totalCents} centavos)."
+                    );
                 }
             } else {
                 SalePayment::create([
