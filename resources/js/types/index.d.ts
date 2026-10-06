@@ -123,9 +123,47 @@ export interface PaginatedData<T> {
     };
 }
 
+export interface CashMovement {
+    id: number;
+    user_id?: number;
+    user?: { id: number; name: string } | null;
+    type: 'supply' | 'bleed';
+    amount: number;
+    reason: string;
+    created_at: string;
+}
+
+export interface CashShift {
+    id: number;
+    user_id?: number;
+    user?: { id: number; name: string; email: string } | null;
+    opened_at: string;
+    closed_at?: string | null;
+    initial_amount: number;
+    final_amount_reported?: number | null;
+    final_amount_expected?: number | null;
+    difference?: number | null;
+    status: 'open' | 'closed';
+    notes?: string | null;
+    sales_count?: number;
+    movements?: CashMovement[];
+    sales?: Array<{
+        id: number;
+        customer?: string | null;
+        total_amount: number;
+        created_at: string;
+    }>;
+}
+
 export interface PageProps {
     auth: {
-        user: User | null;
+        user: (User & {
+            current_cash_shift?: {
+                id: number;
+                opened_at: string;
+                initial_amount: number;
+            } | null;
+        }) | null;
     };
     flash: {
         success?: string | null;

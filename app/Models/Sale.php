@@ -15,7 +15,7 @@ class Sale extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'customer_id', 'payment_method_id',
+        'user_id', 'cash_shift_id', 'customer_id', 'payment_method_id',
         'total_amount', 'status', 'installments', 'discount', 'notes',
     ];
 
@@ -43,6 +43,14 @@ class Sale extends Model
     }
 
     /**
+     * @return BelongsTo<CashShift, $this>
+     */
+    public function cashShift(): BelongsTo
+    {
+        return $this->belongsTo(CashShift::class);
+    }
+
+    /**
      * @return BelongsTo<PaymentMethod, $this>
      */
     public function paymentMethod(): BelongsTo
@@ -64,6 +72,14 @@ class Sale extends Model
     public function saleInstallments(): HasMany
     {
         return $this->hasMany(SaleInstallment::class);
+    }
+
+    /**
+     * @return HasMany<SalePayment, $this>
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(SalePayment::class);
     }
 
     public function scopeRecent(Builder $query, int $limit = 10): Builder

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\CashShiftStatus;
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -87,5 +89,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function canManageExpenses(): bool
     {
         return $this->isActive() && in_array($this->role, [UserRole::Admin, UserRole::Financial], true);
+    }
+
+    /** @return HasMany<CashShift, $this> */
+    public function cashShifts(): HasMany
+    {
+        return $this->hasMany(CashShift::class);
+    }
+
+    public function currentCashShift(): ?CashShift
+    {
+        return $this->cashShifts()->where('status', CashShiftStatus::Open)->latest('opened_at')->first();
     }
 }

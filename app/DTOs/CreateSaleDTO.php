@@ -8,6 +8,7 @@ readonly class CreateSaleDTO
      * @param  list<SaleItemDTO>  $items
      * @param  list<float>  $installmentAmounts
      * @param  list<string>  $installmentDates
+     * @param  list<array{payment_method_id: int, amount: float, change_given?: float, notes?: string|null}>  $payments
      */
     public function __construct(
         public int $userId,
@@ -19,6 +20,8 @@ readonly class CreateSaleDTO
         public array $items,
         public array $installmentAmounts = [],
         public array $installmentDates = [],
+        public ?int $cashShiftId = null,
+        public array $payments = [],
     ) {}
 
     public static function fromArray(array $data, int $userId): self
@@ -30,6 +33,17 @@ readonly class CreateSaleDTO
 
         $installmentAmounts = array_map('floatval', $data['installment_amounts'] ?? []);
         $installmentDates = array_map('strval', $data['installment_dates'] ?? []);
+        $payments = array_map(static fn (array $payment) => [
+            'payment_method_id' => (int) $payment['payment_method_id'],
+            'amount' => (float) $payment['amount'],
+            'change_given' => isset($payment['change_given']) ? (float) $payment['change_given'] : 0.0,
+            'notes' => $payment['notes'] ?? null,
+        ], $data['payments'] ?? []);
+
+        $cashShiftId = ! empty($data['cash_shift_id']) ? (int) $data['cash_shift_id'] : null;
+        if (! $cashShiftId && auth()->user()) {
+            $cashShiftId = auth()->user()->currentCashShift()?->id;
+        }
 
         return new self(
             userId: $userId,
@@ -41,6 +55,8 @@ readonly class CreateSaleDTO
             items: $items,
             installmentAmounts: $installmentAmounts,
             installmentDates: $installmentDates,
+            cashShiftId: $cashShiftId,
+            payments: $payments,
         );
     }
 }

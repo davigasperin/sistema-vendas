@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CashShiftController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseCategoryController;
@@ -27,6 +28,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('expenses/{expense}/mark-paid', [ExpenseController::class, 'markPaid'])->name('expenses.markPaid')->middleware('can:markPaid,expense');
     Route::post('expense-categories', [ExpenseCategoryController::class, 'store'])->name('expense-categories.store');
     Route::resource('expenses', ExpenseController::class);
+
+    Route::get('cashier', [CashShiftController::class, 'index'])->name('cashier.index');
+    Route::post('cashier/open', [CashShiftController::class, 'store'])->name('cashier.open');
+    Route::post('cashier/movement', [CashShiftController::class, 'movement'])->name('cashier.movement');
+    Route::post('cashier/close', [CashShiftController::class, 'close'])->name('cashier.close');
+    Route::get('cashier/{cashShift}', [CashShiftController::class, 'show'])->name('cashier.show');
 
     Route::get('sales/{sale}/pdf', [SaleController::class, 'downloadPdf'])->name('sales.pdf')->middleware('can:downloadPdf,sale');
     Route::post('sales/{sale}/restore', [SaleController::class, 'restore'])->withTrashed()->name('sales.restore')->middleware('can:restore,sale');

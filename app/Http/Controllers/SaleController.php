@@ -30,7 +30,7 @@ class SaleController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(Request $request): Response
     {
         $data = $this->saleService->getSalesForCreate();
 
@@ -41,6 +41,7 @@ class SaleController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name', 'price', 'stock']),
             'paymentMethods' => $data['paymentMethods'],
+            'currentShift' => $request->user()?->currentCashShift(),
         ]);
     }
 

@@ -9,6 +9,7 @@ use App\Exceptions\InsufficientStockException;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
+use App\Models\SalePayment;
 use App\Models\StockMovement;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -33,6 +34,7 @@ class CreateSaleAction
             $sale = new Sale;
             $sale->forceFill([
                 'user_id' => $dto->userId,
+                'cash_shift_id' => $dto->cashShiftId,
                 'customer_id' => $dto->customerId,
                 'payment_method_id' => $dto->paymentMethodId,
                 'status' => SaleStatus::Completed,
@@ -124,6 +126,26 @@ class CreateSaleAction
                     $dto->installmentDates,
                     $dto->installments
                 );
+            }
+
+            if (! empty($dto->payments)) {
+                foreach ($dto->payments as $payment) {
+                    SalePayment::create([
+                        'sale_id' => $sale->id,
+                        'payment_method_id' => $payment['payment_method_id'],
+                        'amount' => $payment['amount'],
+                        'change_given' => $payment['change_given'] ?? 0.0,
+                        'notes' => $payment['notes'] ?? null,
+                    ]);
+                }
+            } else {
+                SalePayment::create([
+                    'sale_id' => $sale->id,
+                    'payment_method_id' => $dto->paymentMethodId,
+                    'amount' => $sale->total_amount,
+                    'change_given' => 0.0,
+                    'notes' => null,
+                ]);
             }
 
             return $sale;

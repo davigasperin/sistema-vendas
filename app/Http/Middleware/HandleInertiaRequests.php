@@ -36,6 +36,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
+        $currentShift = $user?->currentCashShift();
 
         return [
             ...parent::share($request),
@@ -47,6 +48,11 @@ class HandleInertiaRequests extends Middleware
                     'role' => $user->role->value,
                     'role_label' => $user->role->label(),
                     'is_admin' => $user->isAdmin(),
+                    'current_cash_shift' => $currentShift ? [
+                        'id' => $currentShift->id,
+                        'opened_at' => $currentShift->opened_at->toIso8601String(),
+                        'initial_amount' => (float) $currentShift->initial_amount,
+                    ] : null,
                 ] : null,
             ],
             'flash' => [

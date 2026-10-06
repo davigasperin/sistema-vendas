@@ -31,6 +31,12 @@ class SaleRequest extends FormRequest
             'installment_dates.*' => 'required|date',
             'installment_amounts' => 'nullable|array|min:1',
             'installment_amounts.*' => 'required|numeric|min:0',
+            'cash_shift_id' => 'nullable|exists:cash_shifts,id',
+            'payments' => 'nullable|array',
+            'payments.*.payment_method_id' => 'required|exists:payment_methods,id',
+            'payments.*.amount' => 'required|numeric|min:0.01',
+            'payments.*.change_given' => 'nullable|numeric|min:0',
+            'payments.*.notes' => 'nullable|string|max:255',
         ];
 
         if (! empty($this->input('installment_amounts'))) {
