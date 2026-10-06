@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
+import type { PageProps } from '@/types';
 
-const page = usePage();
+const page = usePage<PageProps>();
 const message = ref<string | null>(null);
 const type = ref<'success' | 'error' | 'info'>('success');
 const visible = ref(false);
@@ -11,7 +12,7 @@ let timeout: ReturnType<typeof setTimeout> | null = null;
 
 watch(
     () => page.props.flash,
-    (flash: any) => {
+    (flash) => {
         if (flash?.success) {
             message.value = flash.success;
             type.value = 'success';

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import AppButton from '@/Components/UI/AppButton.vue';
 
 defineProps<{
     canResetPassword?: boolean;

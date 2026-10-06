@@ -30,6 +30,22 @@ class SaleController extends Controller
         ]);
     }
 
+    public function report(Request $request): Response
+    {
+        $this->authorize('report', Sale::class);
+
+        $startDate = $request->filled('start_date') ? (string) $request->start_date : now()->startOfMonth()->toDateString();
+        $endDate = $request->filled('end_date') ? (string) $request->end_date : now()->endOfMonth()->toDateString();
+
+        $report = $this->saleService->getSalesReport($startDate, $endDate);
+
+        return Inertia::render('Sales/Report', [
+            'report' => $report,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ]);
+    }
+
     public function create(Request $request): Response
     {
         $data = $this->saleService->getSalesForCreate();

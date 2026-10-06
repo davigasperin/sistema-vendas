@@ -57,4 +57,9 @@ class SalePolicy
     {
         return true;
     }
+
+    public function report(User $user): bool
+    {
+        return $user->canManageSales() || $user->canManageExpenses();
+    }
 }

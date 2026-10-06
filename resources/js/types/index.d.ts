@@ -168,6 +168,62 @@ export interface CashShift {
     }>;
 }
 
+export interface SalesReportPeriod {
+    start_date: string;
+    end_date: string;
+}
+
+export interface SalesReportTotals {
+    total_sales: number;
+    gross_amount: number;
+    discount_amount: number;
+    net_amount: number;
+    average_ticket: number;
+}
+
+export interface SalesReportPaymentMethod {
+    id: number;
+    name: string;
+    total_amount: number;
+    count: number;
+    percentage: number;
+}
+
+export interface SalesReportTopProduct {
+    id: number;
+    name: string;
+    quantity: number;
+    revenue: number;
+    average_price: number;
+}
+
+export interface SalesReportSeller {
+    id: number;
+    name: string;
+    email: string;
+    sales_count: number;
+    total_amount: number;
+    total_discount: number;
+    average_ticket: number;
+}
+
+export interface SalesReportDailySale {
+    date: string;
+    sales_count: number;
+    total_amount: number;
+    total_discount: number;
+    average_ticket: number;
+}
+
+export interface SalesReportData {
+    period: SalesReportPeriod;
+    totals: SalesReportTotals;
+    payment_methods: SalesReportPaymentMethod[];
+    top_products: SalesReportTopProduct[];
+    sellers: SalesReportSeller[];
+    daily_sales: SalesReportDailySale[];
+}
+
 export interface PageProps {
     auth: {
         user: (User & {

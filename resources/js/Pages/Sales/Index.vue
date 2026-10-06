@@ -65,14 +65,24 @@ function formatDate(dateStr: string): string {
                 <h1 class="text-2xl font-semibold text-slate-900">Vendas</h1>
                 <p class="text-sm text-slate-500 mt-0.5">Histórico completo de pedidos, faturamento e emissão de notas/PDF.</p>
             </div>
-            <Link href="/sales/create">
-                <AppButton variant="primary" size="md">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Nova Venda
-                </AppButton>
-            </Link>
+            <div class="flex items-center gap-2.5">
+                <Link href="/sales/report">
+                    <AppButton variant="secondary" size="md">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Relatório
+                    </AppButton>
+                </Link>
+                <Link href="/sales/create">
+                    <AppButton variant="primary" size="md">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Nova Venda
+                    </AppButton>
+                </Link>
+            </div>
         </div>
 
         <!-- Filter Card -->
@@ -168,6 +178,7 @@ function formatDate(dateStr: string): string {
                                 <a
                                     :href="`/sales/${sale.id}/pdf`"
                                     target="_blank"
+                                    rel="noopener noreferrer"
                                     class="text-xs font-medium text-slate-500 hover:text-slate-900 transition-colors"
                                 >
                                     PDF

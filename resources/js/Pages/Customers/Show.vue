@@ -8,7 +8,7 @@ interface CustomerWithSales extends Customer {
     sales?: Sale[];
 }
 
-const props = defineProps<{
+defineProps<{
     customer: CustomerWithSales;
 }>();
 

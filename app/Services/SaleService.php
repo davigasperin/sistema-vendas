@@ -14,6 +14,7 @@ use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\StockMovement;
+use App\Queries\SalesReportQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -22,7 +23,8 @@ class SaleService
     public function __construct(
         private CreateSaleAction $createSaleAction,
         private UpdateSaleAction $updateSaleAction,
-        private CancelSaleAction $cancelSaleAction
+        private CancelSaleAction $cancelSaleAction,
+        private SalesReportQuery $salesReportQuery
     ) {}
 
     public function createSale(array $data): Sale
@@ -99,6 +101,11 @@ class SaleService
             'products' => $products,
             'paymentMethods' => $paymentMethods,
         ];
+    }
+
+    public function getSalesReport(?string $startDate = null, ?string $endDate = null): array
+    {
+        return $this->salesReportQuery->getReport($startDate, $endDate);
     }
 
     public function getSaleForShow(Sale $sale): Sale

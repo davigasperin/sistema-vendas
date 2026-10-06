@@ -64,8 +64,9 @@ async function handleCreateCategory() {
         form.category_id = response.data.id;
         newCategoryName.value = '';
         showCategoryModal.value = false;
-    } catch (err: any) {
-        categoryError.value = err.response?.data?.message || 'Erro ao criar categoria.';
+    } catch (err) {
+        const errorObj = err as { response?: { data?: { message?: string } } };
+        categoryError.value = errorObj.response?.data?.message || 'Erro ao criar categoria.';
     } finally {
         isCreatingCategory.value = false;
     }

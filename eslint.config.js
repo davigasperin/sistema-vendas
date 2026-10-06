@@ -34,6 +34,9 @@ export default tseslint.config(
                 HTMLTextAreaElement: 'readonly',
                 HTMLSelectElement: 'readonly',
                 HTMLElement: 'readonly',
+                Event: 'readonly',
+                Blob: 'readonly',
+                URL: 'readonly',
             },
         },
         rules: {

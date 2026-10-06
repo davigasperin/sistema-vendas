@@ -73,116 +73,137 @@ function logout() {
       <!-- Navigation Links -->
       <div class="flex flex-1 flex-col overflow-y-auto px-3 py-4 justify-between">
         <nav class="space-y-1">
-          <Link
-            v-for="item in navigation"
-            :key="item.name"
-            :href="item.href"
-            class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors duration-150"
-            :class="[
-              item.current
-                ? 'bg-slate-800 text-white'
-                : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200',
-            ]"
-          >
-            <!-- Icons -->
-            <svg
-              v-if="item.icon === 'dashboard'"
-              class="h-4 w-4 shrink-0 transition-colors"
-              :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div v-for="item in navigation" :key="item.name" class="space-y-1">
+            <Link
+              :href="item.href"
+              class="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors duration-150"
+              :class="[
+                item.current
+                  ? 'bg-slate-800 text-white'
+                  : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200',
+              ]"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-              />
-            </svg>
+              <!-- Icons -->
+              <svg
+                v-if="item.icon === 'dashboard'"
+                class="h-4 w-4 shrink-0 transition-colors"
+                :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                />
+              </svg>
 
-            <svg
-              v-else-if="item.icon === 'sales'"
-              class="h-4 w-4 shrink-0 transition-colors"
-              :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+              <svg
+                v-else-if="item.icon === 'sales'"
+                class="h-4 w-4 shrink-0 transition-colors"
+                :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                />
+              </svg>
+
+              <svg
+                v-else-if="item.icon === 'cashier'"
+                class="h-4 w-4 shrink-0 transition-colors"
+                :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+
+              <svg
+                v-else-if="item.icon === 'products'"
+                class="h-4 w-4 shrink-0 transition-colors"
+                :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                />
+              </svg>
+
+              <svg
+                v-else-if="item.icon === 'customers'"
+                class="h-4 w-4 shrink-0 transition-colors"
+                :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+
+              <svg
+                v-else-if="item.icon === 'expenses'"
+                class="h-4 w-4 shrink-0 transition-colors"
+                :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z"
+                />
+              </svg>
+
+              <span>{{ item.name }}</span>
+            </Link>
+
+            <!-- Vendas Submenu -->
+            <div
+              v-if="item.name === 'Vendas' && item.current"
+              class="ml-7 pl-2 border-l border-slate-800/80 space-y-0.5 py-1"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-              />
-            </svg>
-
-            <svg
-              v-else-if="item.icon === 'cashier'"
-              class="h-4 w-4 shrink-0 transition-colors"
-              :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-
-            <svg
-              v-else-if="item.icon === 'products'"
-              class="h-4 w-4 shrink-0 transition-colors"
-              :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-              />
-            </svg>
-
-            <svg
-              v-else-if="item.icon === 'customers'"
-              class="h-4 w-4 shrink-0 transition-colors"
-              :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
-
-            <svg
-              v-else-if="item.icon === 'expenses'"
-              class="h-4 w-4 shrink-0 transition-colors"
-              :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z"
-              />
-            </svg>
-
-            <span>{{ item.name }}</span>
-          </Link>
+              <Link
+                href="/sales"
+                class="block px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-colors"
+                :class="page.url === '/sales' || (page.url.startsWith('/sales') && !page.url.startsWith('/sales/report')) ? 'text-white bg-slate-800/50' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40'"
+              >
+                Histórico & Pedidos
+              </Link>
+              <Link
+                href="/sales/report"
+                class="block px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-colors"
+                :class="page.url.startsWith('/sales/report') ? 'text-white bg-slate-800/50' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40'"
+              >
+                Relatório de Vendas
+              </Link>
+            </div>
+          </div>
         </nav>
 
         <!-- User Profile & Action -->
@@ -294,18 +315,39 @@ function logout() {
         v-if="mobileMenuOpen"
         class="md:hidden bg-slate-950 px-4 py-4 space-y-1.5 border-b border-slate-800"
       >
-        <Link
-          v-for="item in navigation"
-          :key="item.name"
-          :href="item.href"
-          class="block px-3 py-2 rounded-lg text-xs font-medium"
-          :class="[
-            item.current ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-900',
-          ]"
-          @click="mobileMenuOpen = false"
-        >
-          {{ item.name }}
-        </Link>
+        <div v-for="item in navigation" :key="item.name" class="space-y-1">
+          <Link
+            :href="item.href"
+            class="block px-3 py-2 rounded-lg text-xs font-medium"
+            :class="[
+              item.current ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-900',
+            ]"
+            @click="mobileMenuOpen = false"
+          >
+            {{ item.name }}
+          </Link>
+          <div
+            v-if="item.name === 'Vendas' && item.current"
+            class="ml-4 pl-2 border-l border-slate-800 space-y-1 py-1"
+          >
+            <Link
+              href="/sales"
+              class="block px-2 py-1 text-xs text-slate-400 hover:text-white"
+              :class="{ 'text-white font-medium': page.url === '/sales' || (page.url.startsWith('/sales') && !page.url.startsWith('/sales/report')) }"
+              @click="mobileMenuOpen = false"
+            >
+              Histórico & Pedidos
+            </Link>
+            <Link
+              href="/sales/report"
+              class="block px-2 py-1 text-xs text-slate-400 hover:text-white"
+              :class="{ 'text-white font-medium': page.url.startsWith('/sales/report') }"
+              @click="mobileMenuOpen = false"
+            >
+              Relatório de Vendas
+            </Link>
+          </div>
+        </div>
         <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
           <span class="text-slate-400">{{ page.props.auth.user?.name }}</span>
           <button
