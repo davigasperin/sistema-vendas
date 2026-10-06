@@ -224,7 +224,7 @@ function formatMoney(value: number): string {
 
             <!-- Pagination -->
             <div class="border-t border-slate-100 px-4">
-                <Pagination :links="products.meta?.links || []" />
+                <Pagination :links="products.links || []" />
             </div>
         </div>
 

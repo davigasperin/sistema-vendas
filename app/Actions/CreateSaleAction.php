@@ -12,18 +12,23 @@ use App\Models\SaleItem;
 use App\Models\SalePayment;
 use App\Models\StockMovement;
 use App\Models\User;
+use App\Services\AccountingPeriodService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CreateSaleAction
 {
     public function __construct(
-        private GenerateInstallmentsAction $generateInstallmentsAction
+        private GenerateInstallmentsAction $generateInstallmentsAction,
+        private AccountingPeriodService $accountingPeriodService,
     ) {}
 
     public function __invoke(CreateSaleDTO $dto): Sale
     {
         $sale = DB::transaction(function () use ($dto) {
+            $this->accountingPeriodService->lockForUpdate();
+            $this->accountingPeriodService->assertOpen(now());
+
             $productQuantities = [];
             foreach ($dto->items as $itemDTO) {
                 $productId = $itemDTO->productId;

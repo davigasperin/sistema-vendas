@@ -23,6 +23,8 @@ interface SalesStats {
     averageThisMonth: number;
     lowStockCount?: number;
     overdueInstallmentsCount?: number;
+    pendingInstallmentsAmount?: number;
+    overdueInstallmentsAmount?: number;
 }
 
 interface RecentTransaction {
@@ -189,6 +191,14 @@ const expensePercentage = 100 - incomePercentage;
                 <div>
                     <span class="text-slate-400 block font-medium">Despesas a Vencer</span>
                     <span class="text-slate-900 font-semibold tabular-nums text-sm">{{ formatMoney(financialSummary.expenses.pending) }}</span>
+                </div>
+                <div>
+                    <span class="text-slate-400 block font-medium">A Receber</span>
+                    <span class="text-slate-900 font-semibold tabular-nums text-sm">{{ formatMoney(salesStats.pendingInstallmentsAmount ?? 0) }}</span>
+                </div>
+                <div>
+                    <span class="text-slate-400 block font-medium">Parcelas Vencidas</span>
+                    <span class="text-slate-900 font-semibold tabular-nums text-sm">{{ formatMoney(salesStats.overdueInstallmentsAmount ?? 0) }}</span>
                 </div>
             </div>
         </div>

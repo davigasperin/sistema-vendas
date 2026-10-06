@@ -171,10 +171,10 @@ function differenceClass(): string {
                 </td>
                 <td class="px-4 py-3">
                   <Badge
-                    :variant="movement.type === 'supply' ? 'success' : 'warning'"
+                    :variant="movement.type === 'bleed' ? 'warning' : 'success'"
                     size="sm"
                   >
-                    {{ movement.type === 'supply' ? 'Suprimento' : 'Sangria' }}
+                    {{ movement.type === 'receipt' ? 'Recebimento de parcela' : movement.type === 'supply' ? 'Suprimento' : 'Sangria' }}
                   </Badge>
                 </td>
                 <td class="px-4 py-3">

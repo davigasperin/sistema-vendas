@@ -23,6 +23,7 @@ class SaleInstallmentResource extends JsonResource
             'due_date' => $this->due_date->format('Y-m-d'),
             'paid_date' => $this->paid_date?->format('Y-m-d'),
             'is_paid' => (bool) $this->is_paid,
+            'payment_method_id' => $this->payment_method_id !== null ? (int) $this->payment_method_id : null,
             'status' => $this->status,
             'notes' => $this->notes,
         ];

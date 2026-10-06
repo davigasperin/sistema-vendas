@@ -12,6 +12,20 @@ class AddCashMovementAction
 {
     public function __invoke(CashShift $shift, int $userId, CashMovementType $type, float $amount, string $reason): CashMovement
     {
+        if ($type === CashMovementType::Receipt) {
+            throw new DomainException('Recebimentos só podem ser registrados pela baixa de parcelas.');
+        }
+
+        return $this->create($shift, $userId, $type, $amount, $reason);
+    }
+
+    public function addReceipt(CashShift $shift, int $userId, float $amount, string $reason): CashMovement
+    {
+        return $this->create($shift, $userId, CashMovementType::Receipt, $amount, $reason);
+    }
+
+    private function create(CashShift $shift, int $userId, CashMovementType $type, float $amount, string $reason): CashMovement
+    {
         if ($amount <= 0) {
             throw new DomainException('O valor da movimentação deve ser maior que zero.');
         }

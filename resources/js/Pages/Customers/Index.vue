@@ -151,7 +151,7 @@ function formatDate(dateStr?: string | null): string {
 
             <!-- Pagination -->
             <div class="border-t border-slate-100 px-4">
-                <Pagination :links="customers.meta?.links || []" />
+                <Pagination :links="customers.links || []" />
             </div>
         </div>
     </AppLayout>

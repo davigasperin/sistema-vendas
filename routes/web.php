@@ -7,6 +7,7 @@ use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReceivablesController;
 use App\Http\Controllers\SaleController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,11 @@ Route::middleware('auth')->group(function () {
     Route::post('cashier/movement', [CashShiftController::class, 'movement'])->name('cashier.movement');
     Route::post('cashier/close', [CashShiftController::class, 'close'])->name('cashier.close');
     Route::get('cashier/{cashShift}', [CashShiftController::class, 'show'])->name('cashier.show');
+
+    Route::get('receivables', [ReceivablesController::class, 'index'])->name('receivables.index');
+    Route::post('installments/pay-batch', [ReceivablesController::class, 'payBatch'])->name('installments.pay-batch');
+    Route::post('installments/{saleInstallment}/pay', [ReceivablesController::class, 'pay'])->name('installments.pay');
+    Route::post('month-close/{year}/{month}', [ReceivablesController::class, 'closeMonth'])->name('month-close.store');
 
     Route::get('sales/report', [SaleController::class, 'report'])->name('sales.report')->middleware('can:report,App\Models\Sale');
     Route::get('sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt')->middleware('can:view,sale');

@@ -10,6 +10,7 @@ use App\Queries\ExpenseSummaryQuery;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\Facades\DB;
 
 class ExpenseService
 {
@@ -44,38 +45,53 @@ class ExpenseService
 
     public function createExpense(array $data): Expense
     {
-        $data['status'] = $data['status'] ?? ExpenseStatus::Pending->value;
+        return DB::transaction(function () use ($data): Expense {
+            app(AccountingPeriodService::class)->lockForUpdate();
+            $data['status'] = $data['status'] ?? ExpenseStatus::Pending->value;
+            if ($data['status'] === ExpenseStatus::Paid->value && empty($data['paid_date'])) {
+                $data['paid_date'] = now()->toDateString();
+            }
+            app(AccountingPeriodService::class)->assertOpen($data['due_date'] ?? null, $data['paid_date'] ?? null);
 
-        if ($data['status'] === ExpenseStatus::Paid->value && empty($data['paid_date'])) {
-            $data['paid_date'] = now()->toDateString();
-        }
-
-        return Expense::create($data);
+            return Expense::create($data);
+        });
     }
 
     public function updateExpense(Expense $expense, array $data): Expense
     {
-        if (isset($data['status']) && $data['status'] === Expense::STATUS_PAID && empty($data['paid_date'])) {
-            $data['paid_date'] = now()->toDateString();
-        }
+        return DB::transaction(function () use ($expense, $data): Expense {
+            app(AccountingPeriodService::class)->lockForUpdate();
+            app(AccountingPeriodService::class)->assertOpen($expense->due_date, $expense->paid_date, $data['due_date'] ?? null, $data['paid_date'] ?? null);
 
-        $expense->update($data);
+            if (isset($data['status']) && $data['status'] === Expense::STATUS_PAID && empty($data['paid_date'])) {
+                $data['paid_date'] = now()->toDateString();
+                app(AccountingPeriodService::class)->assertOpen($data['paid_date']);
+            }
 
-        if ($expense->isPending() && $expense->due_date < now()->toDateString()) {
-            $expense->update(['status' => Expense::STATUS_OVERDUE]);
-        }
+            $expense->update($data);
 
-        return $expense->fresh();
+            if ($expense->isPending() && $expense->due_date < now()->toDateString()) {
+                $expense->update(['status' => Expense::STATUS_OVERDUE]);
+            }
+
+            return $expense->fresh();
+        });
     }
 
     public function markAsPaid(Expense $expense, ?string $paidDate = null): Expense
     {
-        $expense->update([
-            'status' => Expense::STATUS_PAID,
-            'paid_date' => $paidDate ?? now()->toDateString(),
-        ]);
+        return DB::transaction(function () use ($expense, $paidDate): Expense {
+            app(AccountingPeriodService::class)->lockForUpdate();
+            $date = $paidDate ?? now()->toDateString();
+            app(AccountingPeriodService::class)->assertOpen($date);
 
-        return $expense->fresh();
+            $expense->update([
+                'status' => Expense::STATUS_PAID,
+                'paid_date' => $date,
+            ]);
+
+            return $expense->fresh();
+        });
     }
 
     public function markAsPending(Expense $expense): Expense
@@ -115,7 +131,12 @@ class ExpenseService
 
     public function deleteExpense(Expense $expense): void
     {
-        $expense->delete();
+        DB::transaction(function () use ($expense): void {
+            app(AccountingPeriodService::class)->lockForUpdate();
+            app(AccountingPeriodService::class)->assertOpen($expense->due_date, $expense->paid_date);
+
+            $expense->delete();
+        });
     }
 
     public function getTotalByType(string $type, ?string $startDate = null, ?string $endDate = null): float

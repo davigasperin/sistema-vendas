@@ -6,11 +6,14 @@ use App\Enums\CashMovementType;
 use App\Enums\CashShiftStatus;
 use App\Enums\SaleStatus;
 use App\Models\CashShift;
+use App\Services\AccountingPeriodService;
 use DomainException;
 use Illuminate\Support\Facades\DB;
 
 class CloseCashShiftAction
 {
+    public function __construct(private AccountingPeriodService $accountingPeriodService) {}
+
     public function __invoke(CashShift $shift, float $reportedAmount, ?string $notes = null): CashShift
     {
         if ($reportedAmount < 0) {
@@ -18,6 +21,7 @@ class CloseCashShiftAction
         }
 
         return DB::transaction(function () use ($shift, $reportedAmount, $notes): CashShift {
+            $this->accountingPeriodService->lockForUpdate();
             $shift = CashShift::query()->lockForUpdate()->findOrFail($shift->id);
 
             if (! $shift->isOpen()) {
@@ -31,14 +35,21 @@ class CloseCashShiftAction
             $bleedsCents = $this->toCents((string) $shift->movements()
                 ->where('type', CashMovementType::Bleed)
                 ->sum('amount'));
+            $receiptsCents = $this->toCents((string) $shift->movements()
+                ->where('type', CashMovementType::Receipt)
+                ->sum('amount'));
 
             $sales = $shift->sales()
                 ->where('status', SaleStatus::Completed)
-                ->with(['payments.paymentMethod', 'paymentMethod'])
+                ->with(['payments.paymentMethod', 'paymentMethod', 'saleInstallments:id,sale_id,is_paid'])
                 ->get();
             $cashSalesCents = 0;
 
             foreach ($sales as $sale) {
+                if ($sale->installments > 1 || $sale->saleInstallments->contains('is_paid', true)) {
+                    continue;
+                }
+
                 if ($sale->payments->isNotEmpty()) {
                     foreach ($sale->payments as $payment) {
                         $methodName = $payment->paymentMethod !== null ? $payment->paymentMethod->name : '';
@@ -54,7 +65,7 @@ class CloseCashShiftAction
                 }
             }
 
-            $expectedCents = $initialCents + $suppliesCents - $bleedsCents + $cashSalesCents;
+            $expectedCents = $initialCents + $suppliesCents + $receiptsCents - $bleedsCents + $cashSalesCents;
             $reportedCents = $this->toCents((string) $reportedAmount);
             $expectedAmount = number_format($expectedCents / 100, 2, '.', '');
             $difference = number_format(($reportedCents - $expectedCents) / 100, 2, '.', '');

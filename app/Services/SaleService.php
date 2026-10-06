@@ -123,14 +123,18 @@ class SaleService
 
     public function deleteSale(Sale $sale): void
     {
-        ($this->cancelSaleAction)($sale, auth()->id());
-        $sale->delete();
+        DB::transaction(function () use ($sale): void {
+            ($this->cancelSaleAction)($sale, auth()->id());
+            $sale->delete();
+        });
     }
 
     public function restoreSale(Sale $sale): void
     {
         DB::transaction(function () use ($sale) {
+            app(AccountingPeriodService::class)->lockForUpdate();
             $lockedSale = Sale::withTrashed()->where('id', $sale->id)->lockForUpdate()->firstOrFail();
+            app(AccountingPeriodService::class)->assertOpen($lockedSale->created_at);
 
             $items = $lockedSale->items()->get();
             foreach ($items as $item) {

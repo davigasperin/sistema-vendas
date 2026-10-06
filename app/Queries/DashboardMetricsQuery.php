@@ -36,10 +36,20 @@ class DashboardMetricsQuery
             ->whereColumn('stock', '<=', 'low_stock_threshold')
             ->count();
 
-        $pendingInstallmentsCount = SaleInstallment::where('is_paid', false)->count();
-        $overdueInstallmentsCount = SaleInstallment::where('is_paid', false)
-            ->where('due_date', '<', today()->toDateString())
-            ->count();
+        $pendingInstallments = SaleInstallment::query()
+            ->whereHas('sale', fn ($sale) => $sale->where('status', SaleStatus::Completed));
+
+        $pendingInstallmentsCount = (clone $pendingInstallments)->where('is_paid', false)->count();
+        $pendingInstallmentsAmount = $this->toMoney(
+            (clone $pendingInstallments)->where('is_paid', false)->sum('amount')
+        );
+
+        $overdueInstallmentsQuery = (clone $pendingInstallments)
+            ->where('is_paid', false)
+            ->where('due_date', '<', today()->toDateString());
+
+        $overdueInstallmentsCount = (clone $overdueInstallmentsQuery)->count();
+        $overdueInstallmentsAmount = $this->toMoney((clone $overdueInstallmentsQuery)->sum('amount'));
 
         return [
             'today' => $salesToday,
@@ -50,7 +60,14 @@ class DashboardMetricsQuery
             'averageThisMonth' => $averageThisMonth,
             'lowStockCount' => $lowStockCount,
             'pendingInstallmentsCount' => $pendingInstallmentsCount,
+            'pendingInstallmentsAmount' => $pendingInstallmentsAmount,
             'overdueInstallmentsCount' => $overdueInstallmentsCount,
+            'overdueInstallmentsAmount' => $overdueInstallmentsAmount,
         ];
+    }
+
+    private function toMoney(mixed $amount): float
+    {
+        return round((float) $amount, 2);
     }
 }

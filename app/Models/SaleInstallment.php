@@ -28,6 +28,8 @@ class SaleInstallment extends Model
         'payment_method_id',
     ];
 
+    protected $appends = ['status'];
+
     protected $casts = [
         'amount' => 'decimal:2',
         'due_date' => 'date',

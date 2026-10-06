@@ -157,4 +157,33 @@ class CashShiftLifecycleTest extends TestCase
         $this->assertEquals(-5.00, $closedShift->difference);
         $this->assertNotNull($closedShift->closed_at);
     }
+
+    public function test_manual_movement_endpoint_rejects_receipt_type(): void
+    {
+        $user = User::factory()->create(['role' => UserRole::Admin, 'email_verified_at' => now()]);
+        app(OpenCashShiftAction::class)($user->id, 100.00);
+
+        $this->actingAs($user)->post(route('cashier.movement'), [
+            'type' => CashMovementType::Receipt->value,
+            'amount' => 10.00,
+            'reason' => 'Tentativa de forjar recebimento',
+        ])->assertSessionHasErrors('type');
+
+        $this->assertDatabaseCount('cash_movements', 0);
+    }
+
+    public function test_manual_action_cannot_create_receipt_movements(): void
+    {
+        $user = User::factory()->create(['role' => UserRole::Admin, 'email_verified_at' => now()]);
+        $shift = app(OpenCashShiftAction::class)($user->id, 100.00);
+
+        try {
+            app(AddCashMovementAction::class)($shift, $user->id, CashMovementType::Receipt, 10.00, 'Forjado');
+            $this->fail('O registro manual de recebimento deveria ser bloqueado.');
+        } catch (DomainException $e) {
+            $this->assertStringContainsString('baixa de parcelas', $e->getMessage());
+        }
+
+        $this->assertDatabaseCount('cash_movements', 0);
+    }
 }

@@ -8,15 +8,21 @@ use App\Exceptions\Domain\SaleCancellationException;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\StockMovement;
+use App\Services\AccountingPeriodService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CancelSaleAction
 {
+    public function __construct(private AccountingPeriodService $accountingPeriodService) {}
+
     public function __invoke(Sale $sale, ?int $userId = null): Sale
     {
         $cancelledSale = DB::transaction(function () use ($sale, $userId) {
+            $this->accountingPeriodService->lockForUpdate();
+
             $lockedSale = Sale::where('id', $sale->id)->lockForUpdate()->firstOrFail();
+            $this->accountingPeriodService->assertOpen($lockedSale->created_at);
 
             if ($lockedSale->status === SaleStatus::Cancelled) {
                 throw SaleCancellationException::alreadyCancelled($lockedSale->id);

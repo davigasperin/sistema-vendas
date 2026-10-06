@@ -9,18 +9,23 @@ use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\StockMovement;
+use App\Services\AccountingPeriodService;
 use Illuminate\Support\Facades\DB;
 
 class UpdateSaleAction
 {
     public function __construct(
-        private GenerateInstallmentsAction $generateInstallmentsAction
+        private GenerateInstallmentsAction $generateInstallmentsAction,
+        private AccountingPeriodService $accountingPeriodService,
     ) {}
 
     public function __invoke(Sale $sale, array $data): Sale
     {
         return DB::transaction(function () use ($sale, $data) {
+            $this->accountingPeriodService->lockForUpdate();
+
             $lockedSale = Sale::where('id', $sale->id)->lockForUpdate()->firstOrFail();
+            $this->accountingPeriodService->assertOpen($lockedSale->created_at);
 
             $hasPaidInstallments = $lockedSale->saleInstallments()
                 ->where('is_paid', true)

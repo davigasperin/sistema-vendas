@@ -32,6 +32,12 @@ const navigation = [
         icon: 'cashier',
     },
     {
+        name: 'Contas a receber',
+        href: '/receivables',
+        current: page.url.startsWith('/receivables'),
+        icon: 'receivables',
+    },
+    {
         name: 'Produtos',
         href: '/products',
         current: page.url.startsWith('/products'),
@@ -129,6 +135,22 @@ function logout() {
                   stroke-linejoin="round"
                   stroke-width="2"
                   d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+
+              <svg
+                v-else-if="item.icon === 'receivables'"
+                class="h-4 w-4 shrink-0 transition-colors"
+                :class="item.current ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 8h6m-6 4h6m-6 4h4M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z"
                 />
               </svg>
 

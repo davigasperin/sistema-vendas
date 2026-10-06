@@ -11,10 +11,13 @@ use App\Enums\SaleStatus;
 use App\Enums\StockMovementType;
 use App\Exceptions\Domain\SaleCancellationException;
 use App\Models\Customer;
+use App\Models\MonthClose;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\SaleService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class SaleLifecycleTest extends TestCase
@@ -167,5 +170,87 @@ class SaleLifecycleTest extends TestCase
         $cancelAction = app(CancelSaleAction::class);
         $this->expectException(SaleCancellationException::class);
         $cancelAction($sale);
+    }
+
+    public function test_sale_creation_is_blocked_when_current_month_is_closed(): void
+    {
+        MonthClose::create([
+            'year' => now()->year,
+            'month' => now()->month,
+            'totals' => [],
+            'closed_by' => $this->user->id,
+            'closed_at' => now(),
+        ]);
+
+        $product = Product::factory()->create(['price' => 50.00, 'stock' => 10]);
+        $dto = new CreateSaleDTO(
+            userId: $this->user->id,
+            customerId: $this->customer->id,
+            paymentMethodId: $this->paymentMethod->id,
+            discount: 0,
+            installments: 1,
+            notes: null,
+            items: [new SaleItemDTO($product->id, 1)],
+        );
+
+        try {
+            app(CreateSaleAction::class)($dto);
+            $this->fail('A criação de venda deveria ser bloqueada com o mês fechado.');
+        } catch (ValidationException $e) {
+            $this->assertArrayHasKey('month_close', $e->errors());
+        }
+
+        $this->assertDatabaseCount('sales', 0);
+        $this->assertEquals(10, $product->fresh()->stock);
+    }
+
+    public function test_sale_update_cancel_and_restore_are_blocked_in_closed_origin_month(): void
+    {
+        $product = Product::factory()->create(['price' => 60.00, 'stock' => 10]);
+        $dto = new CreateSaleDTO(
+            userId: $this->user->id,
+            customerId: $this->customer->id,
+            paymentMethodId: $this->paymentMethod->id,
+            discount: 0,
+            installments: 1,
+            notes: null,
+            items: [new SaleItemDTO($product->id, 1)],
+        );
+        $sale = app(CreateSaleAction::class)($dto);
+        $softDeleted = app(CreateSaleAction::class)($dto);
+
+        MonthClose::create([
+            'year' => $sale->created_at->year,
+            'month' => $sale->created_at->month,
+            'totals' => [],
+            'closed_by' => $this->user->id,
+            'closed_at' => now(),
+        ]);
+
+        try {
+            app(UpdateSaleAction::class)($sale, ['discount' => 1.00, 'installments' => 1]);
+            $this->fail('A edição de venda deveria ser bloqueada com o mês de origem fechado.');
+        } catch (ValidationException $e) {
+            $this->assertArrayHasKey('month_close', $e->errors());
+        }
+
+        try {
+            app(CancelSaleAction::class)($sale, $this->user->id);
+            $this->fail('O cancelamento de venda deveria ser bloqueado com o mês de origem fechado.');
+        } catch (ValidationException $e) {
+            $this->assertArrayHasKey('month_close', $e->errors());
+        }
+
+        $softDeleted->delete();
+        try {
+            app(SaleService::class)->restoreSale($softDeleted);
+            $this->fail('A restauração de venda deveria ser bloqueada com o mês de origem fechado.');
+        } catch (ValidationException $e) {
+            $this->assertArrayHasKey('month_close', $e->errors());
+        }
+
+        $this->assertEquals(SaleStatus::Completed, $sale->fresh()->status);
+        $this->assertTrue($softDeleted->fresh()->trashed());
+        $this->assertEquals(8, $product->fresh()->stock);
     }
 }

@@ -118,29 +118,25 @@ export interface PaginationLink {
 
 export interface PaginatedData<T> {
     data: T[];
-    links: {
-        first?: string;
-        last?: string;
-        prev?: string | null;
-        next?: string | null;
-    };
-    meta?: {
-        current_page: number;
-        from: number | null;
-        last_page: number;
-        path: string;
-        per_page: number;
-        to: number | null;
-        total: number;
-        links?: PaginationLink[];
-    };
+    current_page: number;
+    from: number | null;
+    last_page: number;
+    path: string;
+    per_page: number;
+    to: number | null;
+    total: number;
+    links: PaginationLink[];
+    first_page_url?: string;
+    last_page_url?: string;
+    prev_page_url?: string | null;
+    next_page_url?: string | null;
 }
 
 export interface CashMovement {
     id: number;
     user_id?: number;
     user?: { id: number; name: string } | null;
-    type: 'supply' | 'bleed';
+    type: 'supply' | 'bleed' | 'receipt';
     amount: number;
     reason: string;
     created_at: string;
@@ -222,6 +218,45 @@ export interface SalesReportData {
     top_products: SalesReportTopProduct[];
     sellers: SalesReportSeller[];
     daily_sales: SalesReportDailySale[];
+}
+
+export interface ReceivablesInstallment {
+    id: number;
+    sale_id: number;
+    installment_number: number;
+    amount: number;
+    due_date: string;
+    paid_date?: string | null;
+    is_paid: boolean;
+    status: 'pending' | 'paid' | 'overdue' | 'cancelled';
+    notes?: string | null;
+    payment_method?: PaymentMethod | null;
+    sale?: {
+        id: number;
+        total_amount: number;
+        installments: number;
+        customer?: { id: number; name: string } | null;
+        user?: { id: number; name: string } | null;
+    } | null;
+}
+
+export interface MonthSnapshot {
+    year: number;
+    month: number;
+    sales_completed_total: number;
+    installments_received_total: number;
+    spot_sales_total: number;
+    expenses_paid_total: number;
+    cash_balance: number;
+}
+
+export interface MonthClose {
+    id: number;
+    year: number;
+    month: number;
+    totals: MonthSnapshot;
+    closed_by?: number | null;
+    closed_at: string;
 }
 
 export interface PageProps {

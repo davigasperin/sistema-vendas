@@ -199,7 +199,7 @@ function getStatusVariant(statusStr: string) {
 
             <!-- Pagination -->
             <div class="border-t border-slate-100 px-4">
-                <Pagination :links="expenses.meta?.links || []" />
+                <Pagination :links="expenses.links || []" />
             </div>
         </div>
     </AppLayout>

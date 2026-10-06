@@ -9,6 +9,7 @@ use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Product;
 use App\Models\Sale;
+use App\Models\SaleInstallment;
 use App\Models\SaleItem;
 use App\Models\User;
 use App\Queries\ExpenseSummaryQuery;
@@ -64,6 +65,42 @@ class DashboardTest extends TestCase
             ->component('Dashboard/Index')
             ->where('salesStats.total', 1)
             ->where('salesStats.month', 300)
+        );
+    }
+
+    public function test_dashboard_includes_receivable_amount_sums_excluding_invalid_sales(): void
+    {
+        $validSale = Sale::factory()->create(['status' => SaleStatus::Completed, 'installments' => 2]);
+        $cancelledSale = Sale::factory()->create(['status' => SaleStatus::Cancelled, 'installments' => 2]);
+
+        SaleInstallment::factory()->create([
+            'sale_id' => $cancelledSale->id,
+            'amount' => 999.00,
+            'due_date' => now()->subDay()->toDateString(),
+            'is_paid' => false,
+        ]);
+        SaleInstallment::factory()->create([
+            'sale_id' => $validSale->id,
+            'amount' => 100.00,
+            'due_date' => now()->addDays(5)->toDateString(),
+            'is_paid' => false,
+        ]);
+        SaleInstallment::factory()->create([
+            'sale_id' => $validSale->id,
+            'amount' => 40.00,
+            'due_date' => now()->subDay()->toDateString(),
+            'is_paid' => false,
+        ]);
+
+        $response = $this->actingAs($this->user)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('salesStats.pendingInstallmentsCount', 2)
+            ->where('salesStats.pendingInstallmentsAmount', 140)
+            ->where('salesStats.overdueInstallmentsCount', 1)
+            ->where('salesStats.overdueInstallmentsAmount', 40)
         );
     }
 
